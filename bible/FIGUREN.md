@@ -10,6 +10,24 @@
   - Piloten: Uniform von hinten, kein Gesicht
 - Geschlecht/Alter wird **gesagt** („the little girl“) und mit Größe/Kleidung unterstützt – nicht modelliert.
 
+## Maße Grund-Puppe (gemessen 05.11., Bild: `reference/abnahme/puppe_masse.jpg`)
+D = Kopf-Ø. Von Hand an 6 Vorbild-Bildern abgelesen; Perspektive und sitzende Posen → Richtwerte (± ca. 10 %). Unsere Werte sind am Mesh nachgemessen (Erwachsen, T-Pose, ohne Kleidung).
+
+| Maß | RED-EYE (gemessen) | Wir (Erwachsen 1,75 m) |
+|---|---|---|
+| Kopf : Körperhöhe | ≈ 1 : 6 (5,6 D vorgebeugt) | 1 : 6, **D = 0,29 m** (Nick-OK 05.11.) |
+| Schulterbreite | 1,6 D (mit Hoodie) | ≈ 1,6 D bei hängenden Armen (aus Gelenk x ≈ 0,19 m gerechnet, noch nicht posiert) |
+| Rumpf Breite / Tiefe | – | 1,07 D / 0,80 D |
+| Augen-Höhe (von oben) | ≈ 40 % | **53 %** (Signatur: leicht unter der Mitte) |
+| Augen-Abstand | 43–51 % D | **54 % D** (Signatur: weiter auseinander) |
+| Auge Breite / Höhe | 15–17 % / 17–24 % D (oval) | **10,5 % / 16 % D** (Signatur: Kapsel 1 : 1,5) |
+| Mund-Höhe (von oben) | ≈ 76 % | **80 %** (Signatur: tiefer) |
+| Mund Länge / Dicke | 16–23 % / 3–4 % D (gerade) | **17 % / ≈ 2,5 % D** (Signatur: leicht gebogen) |
+| Hals | sichtbar, ≈ 0,29 D breit, 7–15 % D hoch | Kugel ≈ 0,28 D, sichtbar ≈ 8 % D + Gelenk-Ring ≈ 0,42 D |
+| Hand | Fäustling + Daumen-Stummel | Fäustling + Daumen-Stummel, 0,63 D lang |
+| Arm-Dicke | ≈ 0,29 D (mit Hoodie) | Oberarm 0,32 D, Unterarm 0,29 D |
+| Bein-Dicke | ≈ 0,5 D (mit Hose, grob) | Oberschenkel 0,45–0,50 D, Wade 0,36 D, Beine 5,5 cm auseinander (für Mixamo) |
+
 ## UNSERE Signatur – die Puppe ist unique (Nick 05.11.)
 Gleiche Stil-Familie wie RED-EYE (weiße Kugel, matt, minimalistisch), aber **auf den ersten Blick unsere eigene**:
 1. **Augen = kleine senkrechte Kapseln** (etwas höher als breit, ≈ 1 : 1,5), etwas weiter auseinander als bei RED-EYE, leicht unter der Kopfmitte. Nur im Zustand `wach-starr` ein winziger heller Glanzpunkt (wirkt lebendig = unheimlich).
@@ -48,7 +66,7 @@ Grundlage ist immer das **Main-Gesicht** (`neutral`): senkrechte Kapsel-Augen + 
 - **Haupt- und Nebenfiguren** dürfen **ein Gesichts-Merkmal** haben, das sie unterscheidet (RED-EYE: Sommersprossen beim Mädchen): z. B. Sommersprossen, Muttermal, Pflaster, Brille. Gehört in den Steckbrief.
 
 ## Unsere Regeln
-1. **Eine Grund-Puppe** (Kugel-Kopf ⌀ ≈ 0,26 m, weicher Körper, Fäustlinge), mattes Off-White. Drei Körper-Varianten aus demselben Modell: **Erwachsen** (1,75 m), **Erwachsen schmal** (1,65 m, schmalere Schultern), **Kind** (≈ 1,20 m, Kopf relativ größer).
+1. **Eine Grund-Puppe** (Kugel-Kopf ⌀ 0,29 m bei Erwachsen, weicher Körper, Fäustlinge), mattes Off-White. Drei Körper-Varianten aus demselben Modell: **Erwachsen** (1,75 m), **Erwachsen schmal** (1,65 m, schmalere Schultern), **Kind** (≈ 1,20 m, Kopf relativ größer).
 2. **Geschlecht über Kleidung, nicht über Körper**: z. B. Rock/Kleid, Mantel mit Gürtel, Haarband/Spange als feste Form, kleine Ohrstecker – sparsam, nur wenn die Story es braucht. **Keine echten Haare.**
 3. **Hauptfiguren** bekommen je **eine eindeutige Akzentfarbe + ein Merkmal**, das in jeder Einstellung sichtbar ist (z. B. gelbe Regenjacke, rote Mütze). So erkennt man sie auch im Dunkeln.
 4. **Serien-Requisit** an allen Statisten (wie die Schlafmasken): macht den Ort sofort lesbar.
