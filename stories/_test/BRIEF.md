@@ -1,4 +1,4 @@
-# AUFTRAG 1 für Claude Code (lokal auf Nicks PC): Look-Test „Sitzreihe bei Nacht“
+# AUFTRAG 2 für Claude Code (lokal auf Nicks PC): Look-Test „Sitzreihe bei Nacht“ – erst NACH `stories/_puppe/BRIEF.md`, mit der fertigen Puppe statt Y Bot
 
 > Ziel: beweisen, dass wir den RED-EYE-Look in Blender auf Nicks PC hinbekommen, **bevor** wir eine Serie schreiben.
 > Lies: `CLAUDE.md`, `bible/STILBIBEL.md`, `reference/redeye/ANALYSE.md`, Bilder in `reference/redeye/frames/` + `boards/redeye-p1.jpg`.
