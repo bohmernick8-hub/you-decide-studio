@@ -13,12 +13,14 @@ CHAR_DIR = "C:/ProjectTikTok/studio/assets/characters"
 # Basis-Maße: siehe bible/FIGUREN.md -> „Maße Grund-Puppe“ (D = Kopf-Ø, Figur ≈ 6 D)
 VARIANTS = {
     "Erwachsen": dict(H=1.75, D=0.29, sx=1.00, sy=1.00, th=1.00, loc=(0.0, 0.0, 0.0)),
-    "Schmal": dict(H=1.65, D=0.275, sx=0.87, sy=0.92, th=0.88, loc=(2.0, 0.0, 0.0)),
-    "Kind": dict(H=1.20, D=0.255, sx=0.70, sy=0.72, th=0.70, loc=(-1.8, 0.0, 0.0)),
+    "Schmal": dict(H=1.65, D=0.275, sx=0.90, sy=0.93, th=0.90, loc=(1.9, 0.0, 0.0)),
+    "Kind": dict(H=1.20, D=0.255, sx=0.74, sy=0.78, th=0.80, loc=(-1.6, 0.0, 0.0)),
 }
-BODY_TOP = 1.43     # Oberkante Körper-Käfig bei 1,75 m
-SHOULDER_X = 0.215  # Arm-Ansatz
-XL = 0.098          # Bein-Mitte
+BODY_TOP = 1.426    # Oberkante Körper-Käfig bei 1,75 m
+NECK_GAP = 0.034    # Abstand Kopf-Unterkante -> Käfig-Oberkante bei D=0,29 (Hals sichtbar 10-15 % D)
+SHOULDER_X = 0.146  # Schulter-Gelenk
+ARM_Z = 1.325       # Höhe der Arm-Achse
+XL = 0.078          # Bein-Mitte
 HEAD_GRID = 24      # Kacheln pro Würfel-Kante der Kopf-Kugel
 SEAM_DEPTH = 0.0010  # Guss-Naht: Tiefe (m) bei D=0,29
 SEAM_A = (0.0085, 0.019)  # Naht: Stützkanten (Würfel-Parameter, ±1,2 mm / ±2,8 mm)
@@ -54,22 +56,36 @@ THUMB_K = [(-C45, -C45), (0, -1), (C45, -C45), (1, 0), (C45, C45), (0, 1), (-C45
 LEG_A = [math.radians(a) for a in (-125, -65, 0, 65, 125, 155, 180, -155)]
 
 
+def body_scale(p):
+    return (p["H"] - p["D"] - NECK_GAP * p["D"] / 0.29) / BODY_TOP
+
+
+def rig_joints(p):
+    """Gelenk-Positionen in der T-Pose (für Test-Posen und zur Kontrolle der Maße)."""
+    sz = body_scale(p)
+    ax = lambda x: SHOULDER_X * p["sx"] + (x - SHOULDER_X) * sz
+    R = p["D"] / 2
+    return dict(sz=sz, jx=ax(SHOULDER_X), elbow=ax(0.436), wrist=ax(0.656), tip=ax(0.819), za=ARM_Z * sz,
+                xl=XL * p["sx"], hip=0.765 * sz, knee=0.44 * sz, ankle=0.095 * sz, zb=p["H"] - p["D"], R=R,
+                chest_top=1.42 * sz, spine=1.15 * sz, belly=0.93 * sz, pelvis=0.82 * sz)
+
+
 def body_cage(p):
-    sz = (p["H"] - p["D"] - 0.03 * p["D"] / 0.29) / BODY_TOP
+    sz = body_scale(p)
     sx, sy, th = p["sx"], p["sy"], p["th"]
     sa = sz  # Arm-Länge skaliert mit der Höhe
     c = Cage()
 
-    # Rumpf: z, Seite, vorn/hinten-x, vorn/hinten-y, Mitte vorn, Mitte hinten
+    # Rumpf: z, Seite, vorn/hinten-x, vorn/hinten-y, Mitte vorn, Mitte hinten (runde Vinyl-Form, leichter Bauch)
     T = [
-        (0.85, 0.172, 0.116, 0.106, 0.106, 0.110),
-        (0.93, 0.174, 0.120, 0.112, 0.112, 0.120),
-        (1.06, 0.160, 0.108, 0.102, 0.104, 0.106),
-        (1.17, 0.172, 0.116, 0.114, 0.118, 0.118),
-        (1.26, 0.192, 0.130, 0.120, 0.122, 0.124),
-        (1.335, 0.205, 0.138, 0.112, 0.114, 0.116),
-        (1.395, 0.168, 0.112, 0.088, 0.090, 0.092),
-        (1.425, 0.066, 0.046, 0.054, 0.056, 0.058),
+        (0.81, 0.140, 0.104, 0.090, 0.100, 0.106),
+        (0.90, 0.162, 0.120, 0.102, 0.116, 0.122),
+        (1.03, 0.164, 0.124, 0.110, 0.130, 0.122),
+        (1.16, 0.156, 0.116, 0.106, 0.122, 0.116),
+        (1.255, 0.162, 0.118, 0.100, 0.112, 0.112),
+        (1.325, 0.168, 0.120, 0.086, 0.096, 0.098),
+        (1.395, 0.140, 0.102, 0.066, 0.074, 0.076),
+        (1.42, 0.090, 0.064, 0.050, 0.056, 0.058),
     ]
     rings = []
     for z, w, x1, d1, d0f, d0b in T:
@@ -84,13 +100,13 @@ def body_cage(p):
                 continue
             c.f.append((lo[k], lo[k + 1], up[k + 1], up[k]))
     top = rings[-1]
-    cc = c.add(0.0, 0.0, 1.43 * sz)
+    cc = c.add(0.0, 0.0, BODY_TOP * sz)
     c.f += [(top[0], top[1], top[2], cc), (top[2], top[3], top[4], cc)]  # halber Deckel
 
     # Arm + Fäustling (T-Pose, Handfläche unten)
     t4, t5, t6 = rings[4], rings[5], rings[6]
     root = [t4[1], t4[2], t4[3], t5[3], t6[3], t6[2], t6[1], t5[1]]
-    za = 1.335 * sz
+    za = ARM_Z * sz
 
     def arm_x(x):
         return SHOULDER_X * sx + (x - SHOULDER_X) * sa
@@ -100,56 +116,59 @@ def body_cage(p):
         rz *= th
         return [c.add(arm_x(x), ky * ry, za + kz * rz) for ky, kz in ARM_K]
 
-    A = [(0.262, 0.060, 0.068), (0.31, 0.053, 0.057), (0.39, 0.050, 0.052), (0.45, 0.047, 0.048), (0.49, 0.046, 0.047),
-         (0.53, 0.047, 0.048), (0.61, 0.046, 0.046), (0.69, 0.041, 0.041), (0.735, 0.037, 0.037)]
+    A = [(0.186, 0.044, 0.045), (0.226, 0.040, 0.042), (0.301, 0.0375, 0.0385), (0.381, 0.036, 0.036), (0.436, 0.034, 0.034),
+         (0.481, 0.034, 0.034), (0.551, 0.034, 0.034), (0.621, 0.0305, 0.0305), (0.656, 0.029, 0.029)]
     prev = root
     for x, ry, rz in A:
         r = arm_ring(x, ry, rz)
         c.tube(prev, r)
         prev = r
-    H = [(0.765, 0.052, 0.036), (0.81, 0.064, 0.038), (0.855, 0.064, 0.036), (0.895, 0.050, 0.030), (0.915, 0.026, 0.017)]
+    # Fäustling: deutlich breiter als das Handgelenk
+    HW = 0.054
+    H = [(0.678, 0.038, 0.029), (0.701, 0.047, 0.032), (0.731, 0.053, 0.033), (0.766, HW, 0.032), (0.796, 0.046, 0.028), (0.813, 0.026, 0.016)]
     hr = [arm_ring(*h) for h in H]
     c.tube(prev, hr[0])
-    c.tube(hr[0], hr[1], skip=(6, 7))  # Daumen-Öffnung
-    c.tube(hr[1], hr[2], skip=(6, 7))
-    c.tube(hr[2], hr[3])
+    c.tube(hr[0], hr[1])
+    c.tube(hr[1], hr[2], skip=(6, 7))  # Daumen-Öffnung
+    c.tube(hr[2], hr[3], skip=(6, 7))
     c.tube(hr[3], hr[4])
-    c.cap(hr[4], c.add(arm_x(0.92), 0.0, za))
-    # Daumen-Stummel nach vorn (-Y)
-    loop = [hr[0][0], hr[1][0], hr[2][0], hr[2][7], hr[2][6], hr[1][6], hr[0][6], hr[0][7]]
-    hx = arm_x(0.81)
+    c.tube(hr[4], hr[5])
+    c.cap(hr[5], c.add(arm_x(0.819), 0.0, za))
+    # Daumen-Stummel: kurz, dick, stumpf; leicht zu den Fingerspitzen geneigt, damit er sich klar vom Fäustling abhebt
+    loop = [hr[1][0], hr[2][0], hr[3][0], hr[3][7], hr[3][6], hr[2][6], hr[1][6], hr[1][7]]
+    hx = arm_x(0.731)
     prev = loop
-    for dy, dx, ru, rw in ((0.012, 0.004, 0.034, 0.027), (0.040, 0.016, 0.028, 0.025), (0.066, 0.028, 0.022, 0.020)):
-        r = [c.add(hx + dx * sa + kx * ru * th, -(0.064 * th + dy * th), za + kz * rw * th - 0.003 * th) for kx, kz in THUMB_K]
+    for dy, dx, ru, rw in ((0.010, 0.004, 0.027, 0.023), (0.028, 0.010, 0.024, 0.022), (0.044, 0.017, 0.021, 0.019), (0.056, 0.022, 0.015, 0.014)):
+        r = [c.add(hx + dx * sa + kx * ru * th, -(HW * th + dy * th), za + kz * rw * th - 0.003 * th) for kx, kz in THUMB_K]
         c.tube(prev, r)
         prev = r
-    c.cap(prev, c.add(hx + 0.033 * sa, -(0.064 * th + 0.077 * th), za - 0.003 * th))
+    c.cap(prev, c.add(hx + 0.024 * sa, -(HW * th + 0.061 * th), za - 0.003 * th))
 
-    # Bein + Fuß
+    # Bein + Fuß (Schritt etwas tiefer: Beine minimal kürzer)
     t0 = rings[0]
-    cf, c0, cb = c.add(0.0, -0.070 * sy, 0.785 * sz), c.add(0.0, 0.0, 0.755 * sz), c.add(0.0, 0.070 * sy, 0.785 * sz)
+    cf, c0, cb = c.add(0.0, -0.058 * sy, 0.745 * sz), c.add(0.0, 0.0, 0.715 * sz), c.add(0.0, 0.058 * sy, 0.745 * sz)
     root = [t0[0], t0[1], t0[2], t0[3], t0[4], cb, c0, cf]
     xl = XL * sx
 
-    def leg_ring(z, rx, ry, yc=0.0, scale_z=True):
-        z = z * sz if scale_z else z
+    def leg_ring(z, rx, ry, yc=0.0):
+        z = z * sz
         rx *= th
         ry *= th
         return [c.add(xl + rx * math.cos(a), yc * th + ry * math.sin(a), z) for a in LEG_A]
 
-    L = [(0.70, 0.076, 0.098), (0.60, 0.074, 0.088), (0.51, 0.066, 0.074), (0.465, 0.063, 0.069), (0.42, 0.063, 0.069),
-         (0.30, 0.060, 0.065), (0.17, 0.050, 0.053), (0.10, 0.045, 0.048)]
+    L = [(0.665, 0.060, 0.070), (0.57, 0.0485, 0.052), (0.49, 0.0425, 0.045), (0.44, 0.041, 0.043), (0.395, 0.041, 0.043),
+         (0.28, 0.041, 0.044), (0.16, 0.035, 0.037), (0.10, 0.032, 0.034)]
     prev = root
     for z, rx, ry in L:
         r = leg_ring(z, rx, ry)
         c.tube(prev, r)
         prev = r
-    Fo = [(0.058, 0.056, 0.098, -0.035), (0.024, 0.064, 0.125, -0.050), (0.0, 0.056, 0.110, -0.050)]
+    Fo = [(0.058, 0.042, 0.085, -0.032), (0.024, 0.050, 0.108, -0.045), (0.0, 0.044, 0.096, -0.045)]
     for z, rx, ry, yc in Fo:
         r = leg_ring(z, rx, ry, yc)
         c.tube(prev, r)
         prev = r
-    c.cap(prev, c.add(xl, -0.050 * th, 0.0))
+    c.cap(prev, c.add(xl, -0.045 * th, 0.0))
     return c
 
 
@@ -260,7 +279,7 @@ def neck_mesh(p, zc, R):
     bv, bf = quad_sphere(g, g, g)
     ball = [(x * rb, y * rb, zb + z * rb) for x, y, z in bv]
     # Gelenk-Ring (Rotationskörper, geschlossenes Profil)
-    z0 = zb - 0.040 * k
+    z0 = zb - 0.041 * k
     prof = [(0.034, 0.0), (0.054, 0.0), (0.060, 0.005), (0.061, 0.012), (0.057, 0.019), (0.046, 0.022), (0.036, 0.021)]
     seg = 32
     rv, rf = [], []

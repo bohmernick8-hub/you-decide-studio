@@ -64,13 +64,79 @@ def do_hero():
     render(f"{R}/koerper_warm.png", 1000, 1000, 48)
 
 
-def do_lineup():
+def do_posen():
+    """Körper sitzend + stehend für den Vergleich (Hilfs-Skelett aus pose_test.py, nicht das Mixamo-Rig)."""
+    cleanup()
     scn, P = base()
-    only("Puppe_Erwachsen", "Puppe_Schmal", "Puppe_Kind")
+    only()
     set_look("warm")
-    camera((0.1, -8.6, 1.05), (0.1, 0, 0.92), 50).data.dof.use_dof = False
-    render(f"{R}/varianten.png", 1600, 800, 48)
-    only("Puppe_Erwachsen")
+    ob, rig = make_posed("Erwachsen")
+    # stehend wie RED-EYE P2 31,3 s (von hinten, ein Arm ausgestreckt)
+    apply_pose(rig, pose_stehen(rig, reach=True))
+    ground(ob, rig)
+    rig.rotation_euler.z = math.pi
+    camera((-0.24, -0.90, 1.30), (0.05, 0, 1.24), 26, 2.8, (0, 0.05, 1.45))
+    render(f"{R}/pose_steh_p2.png", 1080, 1920, 64)
+    rig.rotation_euler.z = 0
+    # stehend, Arme hängen: vorn / Seite / Rücken
+    apply_pose(rig, pose_stehen(rig))
+    ground(ob, rig)
+    za = rig_joints(VARIANTS["Erwachsen"])["za"]
+    w = world_coords(ob)
+    band = (w[:, 2] > za - 0.06) & (w[:, 2] < za + 0.07)
+    print("Schulterbreite stehend /D:", round(float(w[band, 0].max() - w[band, 0].min()) / 0.29, 3))
+    camera((0, -4.2, 0.95), (0, 0, 0.88), 50).data.dof.use_dof = False
+    for nm, rz in (("vorn", 0), ("seite", 90), ("ruecken", 180)):
+        rig.rotation_euler.z = math.radians(rz)
+        render(f"{R}/pose_steh_{nm}.png", 900, 900, 48)
+    rig.rotation_euler.z = 0
+    # sitzend wie RED-EYE P1 110 s
+    apply_pose(rig, pose_sitzen(rig))
+    ground(ob, rig)
+    print("Sitz:", seat_for(ob, rig))
+    ob["ausdruck"] = 1
+    camera((0.54, -1.50, 0.96), (0.15, -0.10, 1.17), 34, 2.8, (0, -0.1, 1.27))
+    render(f"{R}/pose_sitz_p1.png", 1080, 1920, 64)
+    camera((0, -4.2, 0.85), (0, -0.05, 0.72), 50).data.dof.use_dof = False
+    for nm, rz in (("dreiviertel", 35), ("seite", 90)):
+        rig.rotation_euler.z = math.radians(rz)
+        render(f"{R}/pose_sitz_{nm}.png", 900, 900, 48)
+    cleanup()
+
+
+def do_details():
+    scn, P = base()
+    set_look("warm")
+    camera((0, -4.2, 1.0), (0, 0, 0.9), 50).data.dof.use_dof = False
+    render(f"{R}/t_vorn.png", 900, 900, 48)
+    # Fäustling von oben (Daumen zeigt zur Bildunterkante)
+    j = rig_joints(VARIANTS["Erwachsen"])
+    camera((j["wrist"] + 0.05, -0.07, j["za"] + 0.42), (j["wrist"] + 0.05, -0.07, j["za"]), 50).data.dof.use_dof = False
+    render(f"{R}/detail_hand.png", 900, 900, 48)
+    closeup_cam(0.55, 70, 8.0, yaw=-8, pitch=0, res=(900, 900))
+    render(f"{R}/detail_hals.png", 900, 900, 48)
+
+
+def do_lineup():
+    """Alle drei Varianten stehend mit hängenden Armen."""
+    cleanup()
+    scn, P = base()
+    only()
+    set_look("warm")
+    for nm, x in (("Kind", -0.75), ("Erwachsen", 0.0), ("Schmal", 0.75)):
+        ob, rig = make_posed(nm)
+        apply_pose(rig, pose_stehen(rig))
+        ground(ob, rig)
+        rig.location.x = x
+        w = world_coords(ob)
+        j = rig_joints(VARIANTS[nm])
+        band = (w[:, 2] > j["za"] - 0.06) & (w[:, 2] < j["za"] + 0.07)
+        D = VARIANTS[nm]["D"]
+        print(nm, "Hoehe", round(float(w[:, 2].max()), 3), "Schultern/D", round(float(w[band, 0].max() - w[band, 0].min()) / D, 2))
+    camera((0, -5.6, 0.95), (0, 0, 0.88), 50).data.dof.use_dof = False
+    render(f"{R}/varianten.png", 1800, 900, 48)
+    cleanup()
+    only("Puppe_Erwachsen", "Puppe_Schmal", "Puppe_Kind")
 
 
 def do_board():

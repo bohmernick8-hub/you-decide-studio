@@ -10,23 +10,26 @@
   - Piloten: Uniform von hinten, kein Gesicht
 - Geschlecht/Alter wird **gesagt** („the little girl“) und mit Größe/Kleidung unterstützt – nicht modelliert.
 
-## Maße Grund-Puppe (gemessen 05.11., Bild: `reference/abnahme/puppe_masse.jpg`)
-D = Kopf-Ø. Von Hand an 6 Vorbild-Bildern abgelesen; Perspektive und sitzende Posen → Richtwerte (± ca. 10 %). Unsere Werte sind am Mesh nachgemessen (Erwachsen, T-Pose, ohne Kleidung).
+## Maße Grund-Puppe (gemessen 05.11., Bild: `reference/abnahme/puppe_masse.jpg`; Körper nach Nicks Abnahme überarbeitet)
+D = Kopf-Ø. RED-EYE von Hand an 6 Vorbild-Bildern abgelesen; Perspektive und sitzende Posen → Richtwerte (± ca. 10 %). Unsere Werte sind am Mesh nachgemessen (Erwachsen, ohne Kleidung). Stil: **Vinyl-Spielfigur, kein Muskel-Look.**
 
-| Maß | RED-EYE (gemessen) | Wir (Erwachsen 1,75 m) |
+| Maß | RED-EYE (gemessen) | Wir (Erwachsen 1,75 m, nackt) |
 |---|---|---|
 | Kopf : Körperhöhe | ≈ 1 : 6 (5,6 D vorgebeugt) | 1 : 6, **D = 0,29 m** (Nick-OK 05.11.) |
-| Schulterbreite | 1,6 D (mit Hoodie) | ≈ 1,6 D bei hängenden Armen (aus Gelenk x ≈ 0,19 m gerechnet, noch nicht posiert) |
-| Rumpf Breite / Tiefe | – | 1,07 D / 0,80 D |
+| Schulterbreite | 1,6 D (mit Hoodie) | **1,40 D** (stehend, Arme hängen; Ziel 1,35–1,4 D) |
+| Rumpf Breite / Tiefe | – | Brust 1,00 / 0,79 D, Bauch 1,03 / 0,82 D (leicht rundlich), Hüfte 1,00 / 0,77 D |
 | Augen-Höhe (von oben) | ≈ 40 % | **53 %** (Signatur: leicht unter der Mitte) |
 | Augen-Abstand | 43–51 % D | **54 % D** (Signatur: weiter auseinander) |
 | Auge Breite / Höhe | 15–17 % / 17–24 % D (oval) | **10,5 % / 16 % D** (Signatur: Kapsel 1 : 1,5) |
 | Mund-Höhe (von oben) | ≈ 76 % | **80 %** (Signatur: tiefer) |
 | Mund Länge / Dicke | 16–23 % / 3–4 % D (gerade) | **17 % / ≈ 2,5 % D** (Signatur: leicht gebogen) |
-| Hals | sichtbar, ≈ 0,29 D breit, 7–15 % D hoch | Kugel ≈ 0,28 D, sichtbar ≈ 8 % D + Gelenk-Ring ≈ 0,42 D |
-| Hand | Fäustling + Daumen-Stummel | Fäustling + Daumen-Stummel, 0,63 D lang |
-| Arm-Dicke | ≈ 0,29 D (mit Hoodie) | Oberarm 0,32 D, Unterarm 0,29 D |
-| Bein-Dicke | ≈ 0,5 D (mit Hose, grob) | Oberschenkel 0,45–0,50 D, Wade 0,36 D, Beine 5,5 cm auseinander (für Mixamo) |
+| Hals | sichtbar, ≈ 0,29 D breit, 7–15 % D hoch | **sichtbar 14 % D** (Ring + Kugel, Ziel 10–15 %), Kugel ≈ 0,28 D, Ring ≈ 0,42 D |
+| Hand | Fäustling + Daumen-Stummel | Fäustling 0,55 D lang, 0,33 D breit, Daumen-Stummel ragt ≈ 0,22 D seitlich heraus |
+| Arm-Dicke | ≈ 0,29 D (mit Hoodie) | **Oberarm 0,24 D** (mit Ärmel später ≈ 0,29 D), Unterarm 0,21 D |
+| Bein-Dicke | ≈ 0,5 D (mit Hose, grob) | **Oberschenkel 0,30 D**, Wade 0,25 D, Beine ≈ 7 cm auseinander (für Mixamo) |
+| Bein-Länge | – | Schritt bei 0,70 m = 40 % der Höhe |
+
+Varianten (je zum eigenen D): **Schmal** 1,65 m, D = 0,275 m, Schultern 1,34 D, Oberarm 0,23 D, Oberschenkel 0,29 D. **Kind** 1,20 m, D = 0,255 m, Schultern 1,15 D, Oberarm 0,22 D, Oberschenkel 0,28 D, Schritt bei 37,5 % der Höhe.
 
 ## UNSERE Signatur – die Puppe ist unique (Nick 05.11.)
 Gleiche Stil-Familie wie RED-EYE (weiße Kugel, matt, minimalistisch), aber **auf den ersten Blick unsere eigene**:

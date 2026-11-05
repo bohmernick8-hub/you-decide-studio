@@ -9,6 +9,7 @@ BG = (16, 18, 24)
 FG = (236, 236, 236)
 DIM = (170, 176, 188)
 YEL = (245, 197, 24)
+MASSE = "NACKT: OBERARM 0,24 D · OBERSCHENKEL 0,30 D · SCHULTERN 1,40 D · HALS 14 % D · SCHRITT BEI 40 % DER HÖHE"
 
 
 def F(s):
@@ -58,36 +59,49 @@ def tag(im, text, col):
     return im
 
 
+def re_tile(p, row, col):
+    """Einstellung aus dem RED-EYE-Board (nur dort vorhanden), gelbe Zeitmarke überdeckt."""
+    W, H = 1942 / 12, 1142 / 4
+    b = Image.open(RE + f"boards/redeye-p{p}.jpg").convert("RGB")
+    t = b.crop((int(col * W) + 3, int(row * H) + 2, int(col * W + W), int(row * H + H))).resize((540, 960), Image.LANCZOS)
+    # Zeile unter der Marke nach oben ziehen: nahtlos, weil die Wand dort einfarbig ist
+    t.paste(t.crop((0, 66, 320, 67)).resize((320, 66)), (0, 0))
+    return t
+
+
 def vergleich():
     PW, PH = 540, 960
     RED, WIR = (255, 110, 90), (120, 230, 140)
-    a1 = tag(Image.open(RE + "frames/p1_1.2.jpg").convert("RGB").resize((PW, PH)), "RED-EYE  P1 1,2 s", RED)
-    b1 = tag(Image.open(RN + "gross_main_nacht.png").convert("RGB").resize((PW, PH), Image.LANCZOS), "WIR  Nacht, 70 mm f/2", WIR)
-    a2 = tag(Image.open(RE + "frames/p3_54_sprechen.jpg").convert("RGB").resize((PW, PH), Image.LANCZOS), "RED-EYE  P3 55,2 s", RED)
-    b2 = tag(Image.open(RN + "gross_main_warm.png").convert("RGB").resize((PW, PH), Image.LANCZOS), "WIR  warm, 85 mm f/1,8", WIR)
     T = 76
-    views = ["front", "dreiviertel", "seite", "ruecken"]
-    V = PW
-    y2 = T + PH + T
-    y3 = y2 + V + T + V + T
-    S = Image.new("RGB", (PW * 4, y3 + V // 1 + 0), BG)
+    big = lambda n: Image.open(f"{RN}{n}.png").convert("RGB").resize((PW, PH), Image.LANCZOS)
+    sq = lambda n: Image.open(f"{RN}{n}.png").convert("RGB").resize((PW, PW), Image.LANCZOS)
+    row1 = [tag(Image.open(RE + "frames/p1_110.jpg").convert("RGB").resize((PW, PH)), "RED-EYE  P1 110 s", RED),
+            tag(big("pose_sitz_p1"), "WIR  sitzend", WIR),
+            tag(re_tile(2, 0, 10), "RED-EYE  P2 31,3 s", RED),
+            tag(big("pose_steh_p2"), "WIR  stehend", WIR)]
+    row2 = [tag(sq("pose_steh_vorn"), "stehend vorn", WIR), tag(sq("pose_steh_seite"), "stehend Seite", WIR),
+            tag(sq("pose_steh_ruecken"), "stehend Rücken", WIR), tag(sq("pose_sitz_dreiviertel"), "sitzend ¾", WIR)]
+    row3 = [tag(sq("pose_sitz_seite"), "sitzend Seite", WIR), tag(sq("t_vorn"), "T-Pose für Mixamo", WIR),
+            tag(sq("detail_hand"), "Fäustling + Daumen", WIR), tag(sq("detail_hals"), "Hals: Kugel + Ring", WIR)]
+    var = Image.open(RN + "varianten.png").convert("RGB")
+    VH = int(PW * 4 * var.size[1] / var.size[0])
+    H = T + PH + T + PW + PW + T + VH
+    S = Image.new("RGB", (PW * 4, H), BG)
     d = ImageDraw.Draw(S)
-    d.text((16, 18), "GROSS-GESICHT: LINKS RED-EYE, RECHTS WIR", font=F(34), fill=YEL)
-    for i, im in enumerate((a1, b1, a2, b2)):
+    d.text((16, 18), MASSE, font=F(30), fill=YEL)
+    for i, im in enumerate(row1):
         S.paste(im, (i * PW, T))
-    d.text((16, T + PH + 18), "VORDERANSICHT · ¾ · SEITE · RÜCKEN  (Nacht-Licht)", font=F(34), fill=YEL)
-    for i, v in enumerate(views):
-        S.paste(Image.open(f"{RN}view_nacht_{v}.png").convert("RGB").resize((V, V), Image.LANCZOS), (i * PW, y2))
-    d.text((16, y2 + V + 18), "VORDERANSICHT · ¾ · SEITE · RÜCKEN  („Licht an“)", font=F(34), fill=YEL)
-    for i, v in enumerate(views):
-        S.paste(Image.open(f"{RN}view_warm_{v}.png").convert("RGB").resize((V, V), Image.LANCZOS), (i * PW, y2 + V + T))
-    d.text((16, y2 + 2 * V + T + 18), "KÖRPER: LINKS RED-EYE, RECHTS WIR  ·  3 VARIANTEN: KIND 1,20 m · ERWACHSEN 1,75 m · SCHMAL 1,65 m", font=F(34), fill=YEL)
-    c1 = Image.open(RE + "frames/p1_110.jpg").convert("RGB").resize((576, 1024)).crop((18, 340, 558, 880))
-    c2 = Image.open(RN + "koerper_warm.png").convert("RGB").resize((V, V), Image.LANCZOS)
-    S.paste(tag(c1, "RED-EYE  P1 110 s", RED), (0, y3))
-    S.paste(tag(c2, "WIR  (T-Pose, ohne Kleidung)", WIR), (PW, y3))
-    v3 = Image.open(RN + "varianten.png").convert("RGB")
-    S.paste(v3.resize((PW * 2, PW)), (PW * 2, y3))
+    y = T + PH
+    d.text((16, y + 18), "ERWACHSEN 1,75 m, OHNE KLEIDUNG  (Posen über Hilfs-Skelett, noch nicht Mixamo)", font=F(30), fill=YEL)
+    y += T
+    for i, im in enumerate(row2):
+        S.paste(im, (i * PW, y))
+    y += PW
+    for i, im in enumerate(row3):
+        S.paste(im, (i * PW, y))
+    y += PW
+    d.text((16, y + 18), "3 VARIANTEN: KIND 1,20 m · ERWACHSEN 1,75 m · SCHMAL 1,65 m", font=F(30), fill=YEL)
+    S.paste(var.resize((PW * 4, VH), Image.LANCZOS), (0, y + T))
     S.save(AB + "puppe_vergleich.jpg", quality=90)
     print("vergleich", S.size)
 
@@ -98,11 +112,13 @@ def marker():
     W = im.size[0]
     px = lambda x, z: (W / 2 + x / 2.2 * W, W / 2 - (z - 0.9) / 2.2 * W)
     d = ImageDraw.Draw(im)
+    # Gelenke wie rig_joints() in build_puppe.py (Erwachsen)
+    za, wr, el, kx, kz = 1.325, 0.656, 0.436, 0.078, 0.44
     pts = [("1  KINN (Chin)", [(0, 1.475)], (1, -1), (245, 197, 24)),
-           ("2  HANDGELENKE (Wrists)", [(-0.735, 1.335), (0.735, 1.335)], (0, -1), (47, 107, 255)),
-           ("3  ELLBOGEN (Elbows)", [(-0.49, 1.335), (0.49, 1.335)], (0, 1), (46, 180, 90)),
-           ("4  KNIE (Knees)", [(-0.098, 0.465), (0.098, 0.465)], (1, 0), (230, 70, 60)),
-           ("5  LEISTE (Groin)", [(0, 0.78)], (1, 0), (190, 80, 220))]
+           ("2  HANDGELENKE (Wrists)", [(-wr, za), (wr, za)], (0, -1), (47, 107, 255)),
+           ("3  ELLBOGEN (Elbows)", [(-el, za), (el, za)], (0, 1), (46, 180, 90)),
+           ("4  KNIE (Knees)", [(-kx, kz), (kx, kz)], (1, 0), (230, 70, 60)),
+           ("5  LEISTE (Groin)", [(0, 0.725)], (1, 0), (190, 80, 220))]
     for text, ps, (dx, dy), col in pts:
         for x, z in ps:
             X, Y = px(x, z)
@@ -125,6 +141,5 @@ def marker():
 
 
 if __name__ == "__main__":
-    board()
     vergleich()
     marker()
