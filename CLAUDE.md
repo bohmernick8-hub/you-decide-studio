@@ -19,6 +19,12 @@ Mit Nick: **Deutsch, kurz**, unter allem Testbaren eine kurze Test-Anweisung. Ni
 ## Arbeitsteilung
 Blender rendert nur die Bilder (PNG-Sequenzen pro Einstellung, 1080×1920, 30 fps). Untertitel, A/B-Labels, Stimme, Musik, Schnitt kommen danach (Remotion oder FFmpeg – wird in der STILBIBEL festgelegt).
 
+## Vor jedem NEUEN Video (Nick 05.11., Pflicht)
+**Erst Nick fragen, dann bauen.** Vor jeder neuen Folge eine kurze Liste an Nick: was er erstellen/besorgen muss (Props-Bilder per ChatGPT mit Prompt, 3D-Modelle/Orte, Stimme, Cover-Idee) + was Claude selbst baut. Erst nach Nicks OK und wenn die Dateien in `assets/props/<serie>/` liegen, mit dem Bau anfangen. **Qualität vor Menge.**
+
+## Figuren-Bibliothek (einheitlich, nie pro Folge neu bauen)
+Alle Figuren liegen in **einer** Datei `assets/characters/characters.blend` (Basis-Puppe + Körper-Varianten + Outfit-Teile + Gesichts-Texturen) und werden in jede Szene **verlinkt** (Link/Library Override), nicht kopiert. Änderung an der Figur = nur dort. Steckbriefe: `bible/FIGUREN.md`.
+
 ## Goldene Regeln
 - Keine echten Marken/Firmen/Personen (Airline, Hotel usw. erfunden). Horror durch Andeutung, kein Blut, keine Gewalt-Details.
 - **Keine Secrets in Dateien** (ElevenLabs-Key nur als Umgebungsvariable `ELEVENLABS_API_KEY`).
