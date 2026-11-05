@@ -44,3 +44,10 @@
 
 ## 8. Abnahme (jede Einstellung)
 Standbild neben ein passendes RED-EYE-Bild aus `reference/redeye/boards/`: gleiche Helligkeit, gleiche Farbstimmung, gleiche Figuren-Größe im Bild, Untertitel/Labels an derselben Stelle. Bugs: nichts schwebt, keine Figur steckt im Sitz, keine Kamera in Wänden, kein Flackern.
+
+## 9. Ergänzungen aus RED-EYE P3 (Nick 05.11.)
+- **Sprech-Einstellungen**: Groß-Gesicht (Kopf füllt 60–80 % der Breite), **Fokus exakt auf den Augen**, Hintergrund **stark unscharf** (f/1,4–2,0, 85 mm), warmes weiches Licht von vorn-seitlich, Mund wechselt im Takt der Stimme (FIGUREN.md → Sprechen). Vorbild `reference/redeye/frames/p3_54_sprechen.jpg`.
+- **Spiegelungen**: Spiegel/Waschbecken/Fenster spiegeln echt (EEVEE: Raytracing an + **Planar Light Probe** vor jedem Spiegel; Spiegel-Material Metallic 1, Roughness 0,02–0,08). Vorbild `p3_49.5_spiegel.jpg`. Spiegel sind ein Grusel-Werkzeug (etwas steht hinter dir).
+- **„Let's rewind.“-Übergang** (Part 2+): 0,6–0,8 s Rückspul-Effekt (Bild läuft kurz rückwärts, leichter Bildversatz/Streifen, ◀◀-Symbol oben links), dann neuer Weg. Vorbild `p3_20.5_rewind.jpg`.
+- **Weg-Anzeige** (Part 2+): kleine weiße Pille oben mittig mit dem gewählten Weg (z. B. „A · THE LAVATORY“), steht das ganze Video; bei der neuen Wahl kommen die zwei neuen Labels dazu.
+- **Ganze Regel-Karte als Grafik**: Sicherheitskarte mit Logo, nummerierten Feldern, Piktogrammen (Text per Code), Nahaufnahme mit Hand/Finger im Bild.

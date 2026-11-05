@@ -17,9 +17,10 @@ Die 4 Merkmale aus `bible/FIGUREN.md` → „UNSERE Signatur“: senkrechte Kaps
 
 ## 3. Material + Gesicht
 - Material: Off-White ≈ #E8E6E1, Roughness 0,5–0,6, ganz leichter Sheen + minimal Subsurface (wirkt wie mattes Vinyl). Im Look-Licht testen, nicht im Standard-Licht.
-- Gesichter als **Texturen** (per Code erzeugt, PNG 2K, transparent), auf den Kopf projiziert, austauschbar über einen Schalter: **zuerst das Main-Gesicht `neutral` perfekt**, dann daraus alle **15 Ausdrücke** aus `bible/FIGUREN.md` → „Gesichter-Bibliothek“ (gleiches Raster, gleiche Linienstärke). Linienfarbe ≈ #1A1A1A, weiche Kante.
+- Gesichter als **Texturen** (per Code erzeugt, PNG 2K, transparent), auf den Kopf projiziert, austauschbar über einen Schalter: **zuerst das Main-Gesicht `neutral` perfekt**, dann daraus alle **15 Ausdrücke** aus `bible/FIGUREN.md` → „Gesichter-Bibliothek“ (gleiches Raster, gleiche Linienstärke) **+ 5 Mund-Formen fürs Sprechen + Augenbrauen-Ebene + Glanzpunkt-Variante für Groß-Einstellungen** (FIGUREN.md → „Sprechen + Groß-Einstellungen“). Linienfarbe ≈ #1A1A1A, weiche Kante.
 
 ## 4. Abnahme 1 (Standbild, noch ohne Skelett)
+- Zusätzlich: 3-s-Test **Sprechen** (Groß-Gesicht, f/1,8, Hintergrund unscharf, Mund wechselt auf einen Test-Satz) neben `reference/redeye/frames/p3_54_sprechen.jpg`.
 - Render EEVEE mit Look-Licht aus STILBIBEL §3: Vorderansicht, ¾, Seite, Rücken + **Groß-Gesicht** Main-Gesicht + **Gesichter-Board** mit allen 15 Ausdrücken auf dem Kopf im Look-Licht → `reference/abnahme/gesichter_board.jpg`.
 - Vergleich neben die Vorbild-Bilder → `reference/abnahme/puppe_vergleich.jpg` (links RED-EYE, rechts wir).
 - **Stopp → Bild an Nick, auf OK warten.**

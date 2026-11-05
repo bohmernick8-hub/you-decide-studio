@@ -42,6 +42,11 @@ Grundlage ist immer das **Main-Gesicht** (`neutral`): senkrechte Kapsel-Augen + 
 - Technik: alle als PNG 2K transparent, gleiches Raster (Augen/Mund an identischer Stelle), in Blender über **einen Schalter pro Figur** (Image-Textur tauschen / Index), pro Einstellung festgelegt.
 - **Abnahme**: ein Gesichter-Board (alle 15 auf dem Puppen-Kopf im Look-Licht) → `reference/abnahme/gesichter_board.jpg` → Nick-OK.
 
+## Sprechen + Groß-Einstellungen (gemessen an RED-EYE P3 0:54, `reference/redeye/frames/p3_54_sprechen.jpg`)
+- **Figuren sprechen mit 2D-Mund-Wechsel**: der Mund ist eine austauschbare Textur, die im Takt der Stimme wechselt (aus der Lautstärke der Stimmspur, ≈ 8–12 Wechsel/s, nie öfter als alle 2 Frames). Unsere **Mund-Formen (aus dem Main-Mund abgeleitet)**: `m-zu` (gebogener Strich), `m-klein` (kleines o), `m-offen` (Oval), `m-wellig` (Angst-Welle), `m-breit` (E/I). Augen bleiben dabei im gewählten Ausdruck.
+- **Groß-Einstellungen bekommen mehr Leben**: Augen mit **kleinem weißen Glanzpunkt** (auch bei uns, nur in Nah/Groß – in Totalen ohne), dazu **Augenbrauen als eigene Textur-Ebene** für Gefühle (besorgt, wütend, überrascht). Unser Unterschied bleibt: Kapsel-Augen, Naht, Hals-Gelenk, gebogener Mund. `wach-starr` = größerer Glanzpunkt + nie blinzeln.
+- **Haupt- und Nebenfiguren** dürfen **ein Gesichts-Merkmal** haben, das sie unterscheidet (RED-EYE: Sommersprossen beim Mädchen): z. B. Sommersprossen, Muttermal, Pflaster, Brille. Gehört in den Steckbrief.
+
 ## Unsere Regeln
 1. **Eine Grund-Puppe** (Kugel-Kopf ⌀ ≈ 0,26 m, weicher Körper, Fäustlinge), mattes Off-White. Drei Körper-Varianten aus demselben Modell: **Erwachsen** (1,75 m), **Erwachsen schmal** (1,65 m, schmalere Schultern), **Kind** (≈ 1,20 m, Kopf relativ größer).
 2. **Geschlecht über Kleidung, nicht über Körper**: z. B. Rock/Kleid, Mantel mit Gürtel, Haarband/Spange als feste Form, kleine Ohrstecker – sparsam, nur wenn die Story es braucht. **Keine echten Haare.**
