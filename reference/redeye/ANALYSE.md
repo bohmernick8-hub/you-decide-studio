@@ -60,3 +60,11 @@ Quelle: 5 Teile, von Nick heruntergeladen (576×1024, 30 fps). Bilder: `boards/r
 ## Ton (von Nick per Ohr bestätigen)
 - Ein Erzähler, ruhig und nah, 2,3–2,6 Wörter/s; dazu einzelne Figuren-Stimmen (Durchsage, Flüstern).
 - Geräusche aus der Szene (Schritte auf Teppich, Klick der Taschenlampe, Maske schnappt zurück), Musik als leiser Drone. Laut gemastert (−11 LUFS).
+
+## Nachtrag 05.11. abends: Part 6 (92 s, 24 Einstellungen) + Part 7 (106 s, 31 Einstellungen)
+- **Aufbau unverändert**: „So, did you [A] or [B]?“ → schlechtes Ende (~15 s) → „Let's rewind.“ → richtiger Weg → Lore → neue Wahl. Teile werden kürzer (92–106 s).
+- **Lore wird größer**: Uhr im Cockpit steht auf 4:13, „nobody has flown this plane since 1987“, draußen steht alles still (Sterne, Wolken, ein **eingefrorener Feuerball** am Triebwerk) → die Zeit ist stehen geblieben. Pro Teil eine neue große Enthüllung.
+- **Das Regel-Dokument wächst**: dieselbe Sicherheitskarte taucht wieder auf, mit neuen nummerierten Regeln („Never open a window shade above the clouds“, „Never leave the aircraft“) – das Dokument ist das Rückgrat der Serie.
+- **Neue Orte pro Teil innerhalb derselben Welt**: Cockpit (Instrumente, Uhren, Warnleuchte „ENG 1 FIRE“), Dach des Flugzeugs über den Wolken.
+- **Ende jetzt mit „COMMENT A OR B“** als Satz im Video.
+- Bilder: `boards/redeye-p6.jpg`, `boards/redeye-p7.jpg`.
