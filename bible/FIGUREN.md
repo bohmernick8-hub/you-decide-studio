@@ -18,13 +18,37 @@ Gleiche Stil-Familie wie RED-EYE (weiße Kugel, matt, minimalistisch), aber **au
 4. **Mund**: kurzer, ganz leicht gebogener Strich (nicht gerade), etwas tiefer als bei RED-EYE.
 Diese 4 Merkmale gelten für **alle** Menschen-Puppen. Nicht übernehmen: die RED-EYE-Ovalaugen, das Grinse-Monster.
 
+## Gesichter-Bibliothek (alle aus UNSEREM Main-Gesicht abgeleitet, Nick 05.11.)
+Grundlage ist immer das **Main-Gesicht** (`neutral`): senkrechte Kapsel-Augen + leicht gebogener Mund, feste Positionen. Jeder Ausdruck verändert nur **Augen-Form, Lid-Linie, Mund-Form** – Positionen, Linienstärke (#1A1A1A, weiche Kante) und Größenverhältnis bleiben gleich, damit es dieselbe Figur bleibt.
+
+| Name | Augen | Mund | Wann |
+|---|---|---|---|
+| `neutral` (MAIN) | Kapseln | leicht gebogen | Standard |
+| `augen-zu` | Bögen ∪ | wie neutral | schlafen, „keep them shut“ |
+| `schlaefrig` | Kapseln mit Lid bis zur Hälfte | wie neutral | gerade aufgewacht, müde |
+| `blinzeln` | dünner Strich | wie neutral | 2–3 Frames in Groß-Einstellungen (sparsam) |
+| `wach-starr` | Kapseln + winziger Glanzpunkt | gerade | Statisten, die „zu wach“ sind – unheimlich |
+| `neugierig` | Kapseln etwas größer, eine minimal höher | klein „o“ | etwas entdecken (Karte, Geräusch) |
+| `aufgeregt` | größere Kapseln | offen, kleines Oval | Hoffnung, „da ist ein Ausgang!“ |
+| `gluecklich` | Bögen ∩ | Lächeln | Erleichterung, falsche Sicherheit vor dem Twist |
+| `aengstlich` | Kapseln, Lid-Linie innen leicht hochgezogen | gewellter Strich | Bedrohung nähert sich |
+| `erschrocken` | große Kapseln, klein im Innern | kleines rundes „o“ | Schreckmoment |
+| `panisch` | sehr große Kapseln | gewellt, offen | Flucht, Countdown-Ende |
+| `traurig` | Kapseln mit hängender Lid-Linie außen | Bogen nach unten | Verlust, schlechtes Ende |
+| `misstrauisch` | Kapseln mit schräger Lid-Linie oben | gerader Strich, leicht schief | „Kann ich ihr trauen?“ (Wahl-Moment) |
+| `fluestern` | Kapseln leicht schmal | kleiner schräger Strich | jemand flüstert eine Warnung |
+| `leer` | winzige Punkte | kein Mund | „verwandelt“/schlechtes Ende (unheimlich, ohne Gewalt) |
+
+- Technik: alle als PNG 2K transparent, gleiches Raster (Augen/Mund an identischer Stelle), in Blender über **einen Schalter pro Figur** (Image-Textur tauschen / Index), pro Einstellung festgelegt.
+- **Abnahme**: ein Gesichter-Board (alle 15 auf dem Puppen-Kopf im Look-Licht) → `reference/abnahme/gesichter_board.jpg` → Nick-OK.
+
 ## Unsere Regeln
 1. **Eine Grund-Puppe** (Kugel-Kopf ⌀ ≈ 0,26 m, weicher Körper, Fäustlinge), mattes Off-White. Drei Körper-Varianten aus demselben Modell: **Erwachsen** (1,75 m), **Erwachsen schmal** (1,65 m, schmalere Schultern), **Kind** (≈ 1,20 m, Kopf relativ größer).
 2. **Geschlecht über Kleidung, nicht über Körper**: z. B. Rock/Kleid, Mantel mit Gürtel, Haarband/Spange als feste Form, kleine Ohrstecker – sparsam, nur wenn die Story es braucht. **Keine echten Haare.**
 3. **Hauptfiguren** bekommen je **eine eindeutige Akzentfarbe + ein Merkmal**, das in jeder Einstellung sichtbar ist (z. B. gelbe Regenjacke, rote Mütze). So erkennt man sie auch im Dunkeln.
 4. **Serien-Requisit** an allen Statisten (wie die Schlafmasken): macht den Ort sofort lesbar.
 5. **Monster** = gleiche Bauweise, eigene leuchtende Signatur (emissiv), Berufs-Outfit des Ortes, oft mehrere identische.
-6. **Gesichter** als austauschbare Texturen: neutral · Augen zu · erschrocken (größere Ovale) · schläfrig (halbe Bögen). Pro Einstellung festgelegt, nie animiert.
+6. **Gesichter** = die 15 Ausdrücke aus der Gesichter-Bibliothek oben (alle aus dem Main-Gesicht), pro Einstellung festgelegt; Bewegung nur über `blinzeln` (sparsam).
 
 ## Outfit-Baukasten (in `assets/characters/characters.blend`)
 | Teil | Varianten |
