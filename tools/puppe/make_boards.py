@@ -161,6 +161,53 @@ def marker():
     print("marker", im.size)
 
 
+RIG_TEXT = "MIXAMO-RIG AUF DER ORIGINAL-PUPPE (Gesichts-Schalter bleiben) · Y-Bot-Animationen, Hüft-Weg auf unsere Beine skaliert"
+
+
+def rig_sheet(note):
+    """Rig-Test-Blatt: 4 Animationen, Gelenke nah, Varianten."""
+    T, LBL = 540, 76
+    G = (120, 230, 140)
+    rows = [[("a_Sitting_Idle", "Sitting Idle"), ("a_Sleeping_Idle", "Sleeping Idle (Laying Sleeping)"), ("a_Walking", "Walking"),
+             ("a_Look_Over_Shoulder", "Look Over Shoulder")],
+            [("j_1_ellbogen", "Ellbogen (sitzend)"), ("j_2_knie", "Knie + Hüfte (sitzend)"), ("j_3_schultern", "Schultern (gehend)"),
+             ("j_4_hals", "Hals: Kugel + Ring (Kopf gedreht)")],
+            [("v_Schmal_Walking", "Schmal 1,55 m gehend"), ("v_Schmal_Sitting_Idle", "Schmal sitzend"), ("v_Kind_Walking", "Kind 1,15 m gehend"),
+             ("v_Kind_Sitting_Idle", "Kind sitzend")]]
+    S = Image.new("RGB", (4 * T, LBL * 2 + 3 * T), BG)
+    d = ImageDraw.Draw(S)
+    d.text((16, 18), RIG_TEXT, font=F(28), fill=YEL)
+    for r, row in enumerate(rows):
+        for c, (fn, lab) in enumerate(row):
+            im = Image.open(f"{RN}rig/{fn}.png").convert("RGB").resize((T, T), Image.LANCZOS)
+            S.paste(tag(im, lab, G), (c * T, LBL + r * T))
+    d.text((16, LBL + 3 * T + 18), note, font=F(26), fill=FG)
+    S.save(AB + "puppe_rig_test.jpg", quality=90)
+    print("rig_sheet", S.size)
+
+
+def rig_video():
+    """2×2-Video (je 540×540, 114 Bilder = 3,8 s, kürzere Animationen laufen in Schleife) -> puppe_rig_test.mp4."""
+    import os
+    import subprocess
+    import tempfile
+    names = [("Sitting_Idle", "Sitting Idle"), ("Sleeping_Idle", "Sleeping Idle"), ("Walking", "Walking"), ("Look_Over_Shoulder", "Look Over Shoulder")]
+    tmp = tempfile.mkdtemp()
+    for k in range(1, 115):
+        S = Image.new("RGB", (1080, 1080), BG)
+        for i, (fn, lab) in enumerate(names):
+            im = Image.open(f"{RN}rig/video/{fn}_{k:04d}.png").convert("RGB")
+            S.paste(tag(im, lab, (120, 230, 140)), ((i % 2) * 540, (i // 2) * 540))
+        S.save(f"{tmp}/f_{k:04d}.png")
+    out = AB + "puppe_rig_test.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", "30", "-i", f"{tmp}/f_%04d.png", "-c:v", "libx264", "-crf", "20",
+                    "-pix_fmt", "yuv420p", "-preset", "medium", out], check=True)
+    for f in os.listdir(tmp):
+        os.remove(os.path.join(tmp, f))
+    os.rmdir(tmp)
+    print(out, round(os.path.getsize(out) / 1e6, 2), "MB")
+
+
 if __name__ == "__main__":
     vergleich()
     hoodie_test()

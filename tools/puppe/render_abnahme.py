@@ -146,6 +146,108 @@ def do_hoodie():
     cleanup()
 
 
+RIG_ANIMS = [("Sitting Idle", 44), ("Sleeping Idle", 1), ("Walking", 11), ("Look Over Shoulder", 76)]
+
+
+def _rig_setup():
+    scn = bpy.context.scene
+    setup_render(scn)
+    set_look("warm")
+    statisten(False)
+    for o in bpy.data.collections["Puppe"].objects:
+        if o.type == "MESH":
+            face(o)
+    return scn
+
+
+def _ground_anim(rig, mesh, lo, hi):
+    scn = bpy.context.scene
+    mins = []
+    for f in range(lo, hi + 1, max(1, (hi - lo) // 12)):
+        scn.frame_set(f)
+        mins.append(float(world_coords(mesh)[:, 2].min()))
+    rig.location.z = -min(mins)
+
+
+def _bone_w(rig, nm):
+    return rig.matrix_world @ rig.pose.bones["mixamorig:" + nm].head
+
+
+def _anim_on(variant, name, seat_frame=44):
+    rig, mesh = bpy.data.objects["Rig_" + variant], bpy.data.objects["Puppe_" + variant]
+    only("Puppe_" + variant)
+    lo, hi = apply_action(rig, name)
+    _ground_anim(rig, mesh, lo, hi)
+    if name == "Sitting Idle":
+        bpy.context.scene.frame_set(seat_frame)
+        seat_for(mesh, rig, pad=0.0)
+    return rig, mesh, lo, hi
+
+
+def _anim_off(rig, variant):
+    cleanup()
+    clear_action(rig)
+    rig.location = Vector(VARIANTS[variant]["loc"])
+
+
+def do_rig_test():
+    """Standbilder fürs Rig-Test-Blatt: 4 Animationen, Gelenke nah, Varianten."""
+    scn = _rig_setup()
+    out = f"{R}/rig"
+    shots = []
+    for name, f in RIG_ANIMS:
+        rig, mesh, lo, hi = _anim_on("Erwachsen", name)
+        scn.frame_set(f)
+        c = _bone_w(rig, "Spine")
+        off = {"Sleeping Idle": (1.1, -2.0, 1.3)}.get(name, (1.2, -2.6, 0.15))
+        camera((c.x + off[0], c.y + off[1], c.z + off[2]), tuple(c), 50).data.dof.use_dof = False
+        render(f"{out}/a_{name.replace(' ', '_')}.png", 900, 900, 48)
+        if name == "Sitting Idle":
+            t = _bone_w(rig, "LeftForeArm")
+            camera((t.x + 0.9, t.y - 1.3, t.z + 0.35), tuple(t), 50).data.dof.use_dof = False
+            render(f"{out}/j_1_ellbogen.png", 900, 900, 48)
+            t = _bone_w(rig, "LeftLeg")
+            camera((t.x + 1.4, t.y + 0.1, t.z + 0.25), tuple(t), 50).data.dof.use_dof = False
+            render(f"{out}/j_2_knie.png", 900, 900, 48)
+        if name == "Walking":
+            t = _bone_w(rig, "Spine2")
+            camera((t.x + 0.2, t.y - 1.6, t.z + 0.1), tuple(t), 50).data.dof.use_dof = False
+            render(f"{out}/j_3_schultern.png", 900, 900, 48)
+        if name == "Look Over Shoulder":
+            t = _bone_w(rig, "Neck")
+            camera((t.x + 0.45, t.y - 0.8, t.z + 0.05), tuple(t), 50).data.dof.use_dof = False
+            render(f"{out}/j_4_hals.png", 900, 900, 48)
+        _anim_off(rig, "Erwachsen")
+    for variant in ("Schmal", "Kind"):
+        for name, f in (("Walking", 11), ("Sitting Idle", 44)):
+            rig, mesh, lo, hi = _anim_on(variant, name)
+            scn.frame_set(f)
+            c = _bone_w(rig, "Spine")
+            camera((c.x + 1.2, c.y - 2.6, c.z + 0.12), tuple(c), 50).data.dof.use_dof = False
+            render(f"{out}/v_{variant}_{name.replace(' ', '_')}.png", 900, 900, 48)
+            _anim_off(rig, variant)
+    only("Puppe_Erwachsen", "Puppe_Schmal", "Puppe_Kind")
+    scn.frame_set(1)
+
+
+def do_rig_video(name, a, b, frames=114):
+    """Bilder für das 2×2-Bewegungsvideo (Kamera folgt der Hüfte). a..b = Teilstück, damit ein Aufruf kurz bleibt."""
+    scn = _rig_setup()
+    rig, mesh, lo, hi = _anim_on("Erwachsen", name)
+    span = hi - lo + 1
+    off = {"Sleeping Idle": (1.0, -1.9, 1.2)}.get(name, (1.1, -2.5, 0.15))
+    for k in range(a, min(b, frames) + 1):
+        scn.frame_set(lo + (k - 1) % span)
+        c = _bone_w(rig, "Spine")
+        if name != "Walking":
+            c = Vector((c.x, c.y, c.z))
+        camera((c.x + off[0], c.y + off[1], c.z + off[2]), tuple(c), 50).data.dof.use_dof = False
+        render(f"{R}/rig/video/{name.replace(' ', '_')}_{k:04d}.png", 540, 540, 16)
+    _anim_off(rig, "Erwachsen")
+    only("Puppe_Erwachsen", "Puppe_Schmal", "Puppe_Kind")
+    scn.frame_set(1)
+
+
 def do_details():
     scn, P = base()
     set_look("warm")

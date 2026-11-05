@@ -89,8 +89,16 @@ Grundlage ist immer das **Main-Gesicht** (`neutral`): senkrechte Kapsel-Augen + 
 | Serien-Requisit | pro Serie neu (Maske, Armband, Namensschild …) |
 | Stoffe | matt, leichte Falten als Normal-Map, Farben gedeckt, 1 Akzentfarbe pro Hauptfigur |
 
+## Skelett + Animationen (05.11., Test: `reference/abnahme/puppe_rig_test.jpg` + `.mp4`)
+- **Skelett = Mixamo-Auto-Rigger** (Nicks Upload, `C:\ProjectTikTok\assets\mixamo\puppe_rigged.fbx`, 25 Knochen `mixamorig:*`, ohne Finger). In `characters.blend`: `Rig_Erwachsen`, `Rig_Schmal`, `Rig_Kind` (Collection „Puppe“), jede Puppe hängt mit Modifier „Skelett“ dran. Ruhe-Haltung = T-Pose.
+- **Gewichte**: vom Mixamo-Mesh aufs Original übertragen (nächste Fläche) → FaceUV, Material und die Schalter `ausdruck/mund/brauen/glanz` bleiben. **Kopf + Halskugel starr am Kopf-Knochen** (Kopf bleibt rund), Ring folgt dem Hals.
+- **Schmal + Kind**: kein eigener Mixamo-Upload – gleiche Topologie, Gewichte 1:1, Knochen an den Varianten-Körper angepasst (`tools/puppe/rig_puppe.py`).
+- **Animationen**: Mixamo-Dateien (Y Bot, „Without Skin“, 30 fps) passen direkt. Immer über `apply_action(rig, name)` anhängen: skaliert den Hüft-Weg auf unsere Beinlänge (sonst schwebt/versinkt die Puppe) und spreizt die Oberarme 5° (unsere Puppe ist klobiger als der Y Bot). Basis-Aktionen liegen als `Mixamo_*` in der Bibliothek.
+- **Geprüft** (jedes 2. Bild, alle 3 Puppen): Sitting Idle, Sleeping Idle (= „Laying Sleeping.fbx“), Walking ohne Hand-im-Körper. **Look Over Shoulder**: in Bild 5–10 streift eine Hand die Hüfte (bis 3 cm) → in Szenen, wo das im Bild ist, Arm pro Szene korrigieren.
+- Sitzen: Sitz unter dem Becken bauen (`seat_for`), vordere Kante kurz vor den Knien. Kind sitzt mit Y-Bot-Sitzen tief mit nach vorn gestreckten Beinen.
+
 ## Ablauf
 1. Grund-Puppe modellieren → Standbild neben RED-EYE-Figur (`reference/redeye/frames/p1_1.2.jpg`) → Nick-OK.
-2. Export FBX → Nick lädt sie bei **Mixamo** hoch (Auto-Rigger) → gerigged zurück → Animationen aus `C:\ProjectTikTok\assets\mixamo\` testen.
+2. ✔ Export FBX → Nick lädt sie bei **Mixamo** hoch (Auto-Rigger) → gerigged zurück → Animationen aus `C:\ProjectTikTok\assets\mixamo\` testen (siehe „Skelett + Animationen“).
 3. Outfits als eigene Objekte, an das Skelett gebunden → in `characters.blend` sammeln.
 4. Pro Serie: Steckbrief jeder Figur hier ergänzen (Name, Körper-Variante, Outfit, Akzentfarbe, Merkmal, Gesichter).

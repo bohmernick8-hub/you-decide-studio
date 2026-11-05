@@ -307,15 +307,39 @@ def seat_for(ob, rig, pad=0.0):
     """Sitz exakt unter Hintern/Oberschenkel, Lehne direkt am Rücken (Kontakt, nichts schwebt, nichts steckt drin).
     pad: zusätzlicher Abstand zur Lehne, z. B. für Kleidung."""
     co = world_coords(ob)
-    x, y, z = co[:, 0], co[:, 1], co[:, 2]
+    hb = rig.pose.bones.get("mixamorig:Hips")
+    if hb:
+        # Mixamo-Skelett: Sitzfläche unter dem Becken, vordere Kante kurz vor den Knien
+        hp = rig.matrix_world @ hb.head
+        knee_y = min((rig.matrix_world @ rig.pose.bones[f"mixamorig:{s}Leg"].head).y for s in ("Left", "Right"))
+        under = np.hypot(co[:, 0] - hp.x, co[:, 1] - hp.y) < 0.13
+        top = float(co[under & (co[:, 2] < hp.z), 2].min())
+        torso = (np.abs(co[:, 0] - hp.x) < 0.12) & (co[:, 2] > top + 0.12) & (co[:, 2] < top + 0.6)
+        back = float(co[torso, 1].max()) + pad
+        ox = float(hp.x)
+        m = flat_mat("Set_Sitz_M", "#5B5F66", 0.8)
+        front = knee_y + 0.04
+        parts = [box("Sitz_Flaeche", ox - 0.27, ox + 0.27, front, back + 0.02, top - 0.14, top, m),
+                 box("Sitz_Lehne", ox - 0.27, ox + 0.27, back, back + 0.13, top - 0.14, top + 0.72, m),
+                 box("Sitz_Fuss", ox - 0.20, ox + 0.20, front + 0.10, back + 0.06, 0.0, top - 0.12, m)]
+        inv = rig.matrix_world.inverted()
+        for o in parts:
+            o.parent = rig
+            o.matrix_parent_inverse = inv
+        return dict(top=round(top, 3), back=round(back, 3), front=round(front, 3))
+    # relativ zur Figur rechnen (Varianten stehen nicht im Ursprung)
+    ox = float(rig.matrix_world.translation.x)
+    oy = float(np.median(co[:, 1]))
+    x, y, z = co[:, 0] - ox, co[:, 1] - oy, co[:, 2]
     lap = (np.abs(x) < 0.25) & (y > -0.24) & (y < 0.14) & (z > 0.2) & (z < 0.8)
     top = float(z[lap].min())
     torso = (np.abs(x) < 0.12) & (z > top + 0.12) & (z < top + 0.6)
     back = float(y[torso].max()) + pad
     m = flat_mat("Set_Sitz_M", "#5B5F66", 0.8)
-    parts = [box("Sitz_Flaeche", -0.27, 0.27, -0.30, back + 0.02, top - 0.14, top, m),
-             box("Sitz_Lehne", -0.27, 0.27, back, back + 0.13, top - 0.14, top + 0.72, m),
-             box("Sitz_Fuss", -0.20, 0.20, -0.14, back + 0.06, 0.0, top - 0.12, m)]
+    parts = [box("Sitz_Flaeche", ox - 0.27, ox + 0.27, oy - 0.30, oy + back + 0.02, top - 0.14, top, m),
+             box("Sitz_Lehne", ox - 0.27, ox + 0.27, oy + back, oy + back + 0.13, top - 0.14, top + 0.72, m),
+             box("Sitz_Fuss", ox - 0.20, ox + 0.20, oy - 0.14, oy + back + 0.06, 0.0, top - 0.12, m)]
+    back += oy
     inv = rig.matrix_world.inverted()
     for o in parts:
         o.parent = rig
