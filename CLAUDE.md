@@ -5,7 +5,7 @@ Vorbild-Stil: Kanal „malo“ (@playmalo.com), Serie RED-EYE (P1 8,9 Mio.). **S
 Mit Nick: **Deutsch, kurz**, unter allem Testbaren eine kurze Test-Anweisung. Nick hat wenig Blender-Kenntnisse → Claude macht die Blender-Arbeit, Nick klickt nur, wenn nötig.
 
 ## Die eine Linie
-1. `bible/STILBIBEL.md` – Look, Licht, Kamera, Figuren, Schnitt, Untertitel, A/B-Labels, Ton, Dramaturgie (**schlägt jede andere Datei**).
+1. `bible/FORMEL.md` – Aufbau 1:1 wie RED-EYE (Lückentext für jedes Skript) + `bible/STILBIBEL.md` – Look, Licht, Kamera, Figuren, Schnitt, Untertitel, A/B-Labels, Ton, Dramaturgie (**schlägt jede andere Datei**).
 2. `reference/redeye/` – Vorbild-Bilder + Analyse.
 3. `bible/LEARNINGS.md` – Fehler aus früheren Folgen (jedes Mal lesen, jedes Mal ergänzen).
 
