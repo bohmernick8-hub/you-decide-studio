@@ -10,6 +10,14 @@
   - Piloten: Uniform von hinten, kein Gesicht
 - Geschlecht/Alter wird **gesagt** („the little girl“) und mit Größe/Kleidung unterstützt – nicht modelliert.
 
+## UNSERE Signatur – die Puppe ist unique (Nick 05.11.)
+Gleiche Stil-Familie wie RED-EYE (weiße Kugel, matt, minimalistisch), aber **auf den ersten Blick unsere eigene**:
+1. **Augen = kleine senkrechte Kapseln** (etwas höher als breit, ≈ 1 : 1,5), etwas weiter auseinander als bei RED-EYE, leicht unter der Kopfmitte. Nur im Zustand `wach-starr` ein winziger heller Glanzpunkt (wirkt lebendig = unheimlich).
+2. **Feine Guss-Naht** über den Kopf: eine dünne, leicht vertiefte Linie von der Stirnmitte über den Scheitel nach hinten (wie bei einer gegossenen Vinyl-Puppe). Nur im Licht sichtbar, nie dominant.
+3. **Kugelgelenk am Hals**: kurzer sichtbarer Gelenk-Ring zwischen Kopf und Körper (Schaufensterpuppen-Look); Kopf sitzt dadurch minimal „aufgesteckt“.
+4. **Mund**: kurzer, ganz leicht gebogener Strich (nicht gerade), etwas tiefer als bei RED-EYE.
+Diese 4 Merkmale gelten für **alle** Menschen-Puppen. Nicht übernehmen: die RED-EYE-Ovalaugen, das Grinse-Monster.
+
 ## Unsere Regeln
 1. **Eine Grund-Puppe** (Kugel-Kopf ⌀ ≈ 0,26 m, weicher Körper, Fäustlinge), mattes Off-White. Drei Körper-Varianten aus demselben Modell: **Erwachsen** (1,75 m), **Erwachsen schmal** (1,65 m, schmalere Schultern), **Kind** (≈ 1,20 m, Kopf relativ größer).
 2. **Geschlecht über Kleidung, nicht über Körper**: z. B. Rock/Kleid, Mantel mit Gürtel, Haarband/Spange als feste Form, kleine Ohrstecker – sparsam, nur wenn die Story es braucht. **Keine echten Haare.**

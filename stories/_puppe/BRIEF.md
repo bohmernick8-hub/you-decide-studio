@@ -7,6 +7,9 @@
 ## 1. Proportionen aus den Vorbildern ableiten (zuerst!)
 Aus 4–6 Vorbild-Bildern messen und in `bible/FIGUREN.md` → „Maße Grund-Puppe“ eintragen: Kopf-Ø im Verhältnis zur Schulterbreite und zur Körperhöhe, Augen-Höhe auf dem Kopf (von oben in %), Augen-Abstand, Augen-Größe, Mund-Länge/-Höhe, Hals sichtbar ja/nein, Hand-Form (Fäustling, Daumen ja/nein), Arm-/Bein-Dicke. Vergleichsbild mit Maßlinien → `reference/abnahme/puppe_masse.jpg`.
 
+## 1b. Unsere Signatur (Pflicht)
+Die 4 Merkmale aus `bible/FIGUREN.md` → „UNSERE Signatur“: senkrechte Kapsel-Augen, feine Guss-Naht über den Kopf, Kugelgelenk am Hals, leicht gebogener Mund. Proportionen wie RED-EYE, Gesicht + Details eigen. Im Vergleichsbild (Schritt 4) muss man den Unterschied sofort sehen, aber die Stil-Familie muss gleich wirken.
+
 ## 2. Modell (Blender, über MCP)
 - **Ein** sauberes Mesh in **T-Pose**, Quads, ≈ 10–30k Dreiecke, Maßstab echt (1,75 m), Füße auf Z = 0, Blick nach −Y (Blender-Front).
 - Kopf: glatte Kugel (Subdivision, keine Kanten), Größe laut Maßen; Körper weich-klobig, Gelenke (Schulter, Ellbogen, Knie, Hüfte) mit genug Kanten zum Biegen; Fäustlings-Hände laut Vorbild.
@@ -14,7 +17,7 @@ Aus 4–6 Vorbild-Bildern messen und in `bible/FIGUREN.md` → „Maße Grund-Pu
 
 ## 3. Material + Gesicht
 - Material: Off-White ≈ #E8E6E1, Roughness 0,5–0,6, ganz leichter Sheen + minimal Subsurface (wirkt wie mattes Vinyl). Im Look-Licht testen, nicht im Standard-Licht.
-- Gesichter als **Texturen** (per Code erzeugt, PNG 2K, transparent), auf den Kopf projiziert, austauschbar über einen Schalter: `neutral`, `augen-zu` (Bögen), `schlaefrig` (halbe Lider), `erschrocken` (größere Ovale), `wach-starr`. Linienfarbe ≈ #1A1A1A, weiche Kante.
+- Gesichter als **Texturen** (per Code erzeugt, PNG 2K, transparent), auf den Kopf projiziert, austauschbar über einen Schalter: `neutral`, `augen-zu` (Bögen), `schlaefrig` (halbe Lider über den Kapseln), `erschrocken` (größere Kapseln), `wach-starr` (mit winzigem Glanzpunkt) – alle mit den senkrechten Kapsel-Augen. Linienfarbe ≈ #1A1A1A, weiche Kante.
 
 ## 4. Abnahme 1 (Standbild, noch ohne Skelett)
 - Render EEVEE mit Look-Licht aus STILBIBEL §3: Vorderansicht, ¾, Seite, Rücken + **Groß-Gesicht** in allen 5 Gesichtern.
