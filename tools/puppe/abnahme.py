@@ -7,7 +7,7 @@ from mathutils import Vector
 
 RENDERS = "C:/ProjectTikTok/studio/renders/_puppe"
 ABNAHME = "C:/ProjectTikTok/studio/reference/abnahme"
-HEAD_Z = 1.75 - 0.145
+HEAD_Z = VARIANTS["Erwachsen"]["H"] - VARIANTS["Erwachsen"]["D"] / 2
 
 
 def setup_render(scn):

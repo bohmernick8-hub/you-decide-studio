@@ -1,4 +1,6 @@
-"""Montiert gesichter_board.jpg und puppe_vergleich.jpg aus den Renders + RED-EYE-Vorbildern."""
+"""Montiert gesichter_board.jpg, puppe_vergleich.jpg und puppe_hoodie_test.jpg aus den Renders + RED-EYE-Vorbildern."""
+import json
+
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = "C:/ProjectTikTok/studio/"
@@ -9,7 +11,7 @@ BG = (16, 18, 24)
 FG = (236, 236, 236)
 DIM = (170, 176, 188)
 YEL = (245, 197, 24)
-MASSE = "NACKT: OBERARM 0,24 D · OBERSCHENKEL 0,30 D · SCHULTERN 1,40 D · HALS 14 % D · SCHRITT BEI 40 % DER HÖHE"
+MASSE = "NACKT, 1,62 m: OBERARM 0,26 D · SCHULTERN 1,41 D · HALS 13 % D · SCHRITT 0,64 m · RUMPF SITZEND 1,99 D"
 
 
 def F(s):
@@ -92,7 +94,7 @@ def vergleich():
     for i, im in enumerate(row1):
         S.paste(im, (i * PW, T))
     y = T + PH
-    d.text((16, y + 18), "ERWACHSEN 1,75 m, OHNE KLEIDUNG  (Posen über Hilfs-Skelett, noch nicht Mixamo)", font=F(30), fill=YEL)
+    d.text((16, y + 18), "ERWACHSEN 1,62 m, OHNE KLEIDUNG  (Posen über Hilfs-Skelett, noch nicht Mixamo)", font=F(30), fill=YEL)
     y += T
     for i, im in enumerate(row2):
         S.paste(im, (i * PW, y))
@@ -100,25 +102,44 @@ def vergleich():
     for i, im in enumerate(row3):
         S.paste(im, (i * PW, y))
     y += PW
-    d.text((16, y + 18), "3 VARIANTEN: KIND 1,20 m · ERWACHSEN 1,75 m · SCHMAL 1,65 m", font=F(30), fill=YEL)
+    d.text((16, y + 18), "3 VARIANTEN: KIND 1,15 m · ERWACHSEN 1,62 m · SCHMAL 1,55 m", font=F(30), fill=YEL)
     S.paste(var.resize((PW * 4, VH), Image.LANCZOS), (0, y + T))
     S.save(AB + "puppe_vergleich.jpg", quality=90)
     print("vergleich", S.size)
+
+
+def hoodie_test():
+    """Hoodie-Proxy sitzend im Nachtlicht neben RED-EYE P1 110 s (Kopf gleich groß im Bild)."""
+    PW, PH = 720, 1280
+    RED, WIR = (255, 110, 90), (120, 230, 140)
+    T = 76
+    big = lambda n: Image.open(f"{RN}{n}.png").convert("RGB").resize((PW, PH), Image.LANCZOS)
+    tiles = [tag(Image.open(RE + "frames/p1_110.jpg").convert("RGB").resize((PW, PH), Image.LANCZOS), "RED-EYE  P1 110 s", RED),
+             tag(big("hoodie_nacht_p1"), "WIR  Hoodie-Proxy, Nacht, gleiche Einstellung", WIR),
+             tag(big("hoodie_nacht_ganz"), "WIR  ganze Figur", WIR)]
+    S = Image.new("RGB", (PW * 3, T + PH), BG)
+    d = ImageDraw.Draw(S)
+    d.text((16, 18), "HOODIE-TEST (Proxy, nur für Proportionen): 1,62 m · SCHULTERN MIT HOODIE 1,53 D (RED-EYE 1,6 D) · RUMPF SITZEND 1,99 D", font=F(30), fill=YEL)
+    for i, im in enumerate(tiles):
+        S.paste(im, (i * PW, T))
+    S.save(AB + "puppe_hoodie_test.jpg", quality=90)
+    print("hoodie", S.size)
 
 
 def marker():
     """Marker-Hilfe für den Mixamo-Auto-Rigger: Punkte aus den echten Modell-Maßen (Ortho-Kamera, 2,2 m Bildbreite)."""
     im = Image.open(RN + "mixamo_vorn.png").convert("RGB")
     W = im.size[0]
-    px = lambda x, z: (W / 2 + x / 2.2 * W, W / 2 - (z - 0.9) / 2.2 * W)
+    # Positionen schreibt export_mixamo.py aus dem echten Modell (rig_joints + gemessener Schritt)
+    m = json.load(open(RN + "mixamo_marker.json", encoding="utf-8"))
+    px = lambda x, z: (W / 2 + x / m["width"] * W, W / 2 - (z - m["zc"]) / m["width"] * W)
     d = ImageDraw.Draw(im)
-    # Gelenke wie rig_joints() in build_puppe.py (Erwachsen)
-    za, wr, el, kx, kz = 1.325, 0.656, 0.436, 0.078, 0.44
-    pts = [("1  KINN (Chin)", [(0, 1.475)], (1, -1), (245, 197, 24)),
+    za, wr, el, kx, kz = m["za"], m["wrist"], m["elbow"], m["knee_x"], m["knee_z"]
+    pts = [("1  KINN (Chin)", [(0, m["chin"])], (1, -1), (245, 197, 24)),
            ("2  HANDGELENKE (Wrists)", [(-wr, za), (wr, za)], (0, -1), (47, 107, 255)),
            ("3  ELLBOGEN (Elbows)", [(-el, za), (el, za)], (0, 1), (46, 180, 90)),
            ("4  KNIE (Knees)", [(-kx, kz), (kx, kz)], (1, 0), (230, 70, 60)),
-           ("5  LEISTE (Groin)", [(0, 0.725)], (1, 0), (190, 80, 220))]
+           ("5  LEISTE (Groin)", [(0, m["groin"])], (1, 0), (190, 80, 220))]
     for text, ps, (dx, dy), col in pts:
         for x, z in ps:
             X, Y = px(x, z)
@@ -142,4 +163,5 @@ def marker():
 
 if __name__ == "__main__":
     vergleich()
+    hoodie_test()
     marker()

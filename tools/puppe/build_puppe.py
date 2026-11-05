@@ -10,17 +10,20 @@ import numpy as np
 
 CHAR_DIR = "C:/ProjectTikTok/studio/assets/characters"
 
-# Basis-Maße: siehe bible/FIGUREN.md -> „Maße Grund-Puppe“ (D = Kopf-Ø, Figur ≈ 6 D)
+# Basis-Maße: siehe bible/FIGUREN.md -> „Maße Grund-Puppe“ (D = Kopf-Ø, Figur ≈ 5,6 D)
 VARIANTS = {
-    "Erwachsen": dict(H=1.75, D=0.29, sx=1.00, sy=1.00, th=1.00, loc=(0.0, 0.0, 0.0)),
-    "Schmal": dict(H=1.65, D=0.275, sx=0.90, sy=0.93, th=0.90, loc=(1.9, 0.0, 0.0)),
-    "Kind": dict(H=1.20, D=0.255, sx=0.74, sy=0.78, th=0.80, loc=(-1.6, 0.0, 0.0)),
+    "Erwachsen": dict(H=1.62, D=0.29, sx=1.00, sy=1.00, th=1.00, loc=(0.0, 0.0, 0.0)),
+    "Schmal": dict(H=1.55, D=0.275, sx=0.90, sy=0.93, th=0.90, loc=(1.9, 0.0, 0.0)),
+    "Kind": dict(H=1.15, D=0.255, sx=0.74, sy=0.78, th=0.80, loc=(-1.6, 0.0, 0.0)),
 }
-BODY_TOP = 1.426    # Oberkante Körper-Käfig bei 1,75 m
+BODY_TOP = 1.426    # Oberkante Körper-Käfig im Bau-Maß (alle Z-Werte unten werden mit body_scale skaliert)
 NECK_GAP = 0.034    # Abstand Kopf-Unterkante -> Käfig-Oberkante bei D=0,29 (Hals sichtbar 10-15 % D)
 SHOULDER_X = 0.146  # Schulter-Gelenk
 ARM_Z = 1.325       # Höhe der Arm-Achse
 XL = 0.078          # Bein-Mitte
+WRIST_X = 0.656     # Handgelenk im Bau-Maß
+ARM_FACTOR = 0.97   # Arm ohne Hand etwas kürzer als die Höhe, weil die Hand ihre Größe behält
+ADULT_SZ = (1.62 - 0.29 - NECK_GAP) / BODY_TOP  # Hand behält beim Erwachsenen ihre Größe, Varianten im selben Verhältnis
 HEAD_GRID = 24      # Kacheln pro Würfel-Kante der Kopf-Kugel
 SEAM_DEPTH = 0.0010  # Guss-Naht: Tiefe (m) bei D=0,29
 SEAM_A = (0.0085, 0.019)  # Naht: Stützkanten (Würfel-Parameter, ±1,2 mm / ±2,8 mm)
@@ -60,10 +63,25 @@ def body_scale(p):
     return (p["H"] - p["D"] - NECK_GAP * p["D"] / 0.29) / BODY_TOP
 
 
+def arm_mapper(p):
+    """Bau-Maß entlang des Arms -> echte X-Position. Gibt (Funktion, Hand-Maßstab) zurück."""
+    sz = body_scale(p)
+    sa = sz * ARM_FACTOR
+    sh = sz / ADULT_SZ
+    x0 = SHOULDER_X * p["sx"]
+
+    def f(x):
+        if x <= WRIST_X:
+            return x0 + (x - SHOULDER_X) * sa
+        return x0 + (WRIST_X - SHOULDER_X) * sa + (x - WRIST_X) * sh
+
+    return f, sh
+
+
 def rig_joints(p):
     """Gelenk-Positionen in der T-Pose (für Test-Posen und zur Kontrolle der Maße)."""
     sz = body_scale(p)
-    ax = lambda x: SHOULDER_X * p["sx"] + (x - SHOULDER_X) * sz
+    ax, _ = arm_mapper(p)
     R = p["D"] / 2
     return dict(sz=sz, jx=ax(SHOULDER_X), elbow=ax(0.436), wrist=ax(0.656), tip=ax(0.819), za=ARM_Z * sz,
                 xl=XL * p["sx"], hip=0.765 * sz, knee=0.44 * sz, ankle=0.095 * sz, zb=p["H"] - p["D"], R=R,
@@ -73,7 +91,7 @@ def rig_joints(p):
 def body_cage(p):
     sz = body_scale(p)
     sx, sy, th = p["sx"], p["sy"], p["th"]
-    sa = sz  # Arm-Länge skaliert mit der Höhe
+    arm_x, sh = arm_mapper(p)
     c = Cage()
 
     # Rumpf: z, Seite, vorn/hinten-x, vorn/hinten-y, Mitte vorn, Mitte hinten (runde Vinyl-Form, leichter Bauch)
@@ -83,9 +101,9 @@ def body_cage(p):
         (1.03, 0.164, 0.124, 0.110, 0.130, 0.122),
         (1.16, 0.156, 0.116, 0.106, 0.122, 0.116),
         (1.255, 0.162, 0.118, 0.100, 0.112, 0.112),
-        (1.325, 0.168, 0.120, 0.086, 0.096, 0.098),
-        (1.395, 0.140, 0.102, 0.066, 0.074, 0.076),
-        (1.42, 0.090, 0.064, 0.050, 0.056, 0.058),
+        (1.325, 0.168, 0.122, 0.088, 0.098, 0.100),
+        (1.395, 0.158, 0.116, 0.070, 0.078, 0.080),  # breit bis oben: eckige, wenig abfallende Schulter
+        (1.42, 0.112, 0.080, 0.052, 0.058, 0.060),
     ]
     rings = []
     for z, w, x1, d1, d0f, d0b in T:
@@ -108,16 +126,13 @@ def body_cage(p):
     root = [t4[1], t4[2], t4[3], t5[3], t6[3], t6[2], t6[1], t5[1]]
     za = ARM_Z * sz
 
-    def arm_x(x):
-        return SHOULDER_X * sx + (x - SHOULDER_X) * sa
-
     def arm_ring(x, ry, rz):
         ry *= th
         rz *= th
         return [c.add(arm_x(x), ky * ry, za + kz * rz) for ky, kz in ARM_K]
 
-    A = [(0.186, 0.044, 0.045), (0.226, 0.040, 0.042), (0.301, 0.0375, 0.0385), (0.381, 0.036, 0.036), (0.436, 0.034, 0.034),
-         (0.481, 0.034, 0.034), (0.551, 0.034, 0.034), (0.621, 0.0305, 0.0305), (0.656, 0.029, 0.029)]
+    A = [(0.186, 0.047, 0.048), (0.226, 0.044, 0.046), (0.301, 0.0405, 0.0415), (0.381, 0.0387, 0.0387), (0.436, 0.0365, 0.0365),
+         (0.481, 0.035, 0.035), (0.551, 0.034, 0.034), (0.621, 0.0305, 0.0305), (WRIST_X, 0.029, 0.029)]
     prev = root
     for x, ry, rz in A:
         r = arm_ring(x, ry, rz)
@@ -139,10 +154,10 @@ def body_cage(p):
     hx = arm_x(0.731)
     prev = loop
     for dy, dx, ru, rw in ((0.010, 0.004, 0.027, 0.023), (0.028, 0.010, 0.024, 0.022), (0.044, 0.017, 0.021, 0.019), (0.056, 0.022, 0.015, 0.014)):
-        r = [c.add(hx + dx * sa + kx * ru * th, -(HW * th + dy * th), za + kz * rw * th - 0.003 * th) for kx, kz in THUMB_K]
+        r = [c.add(hx + dx * sh + kx * ru * th, -(HW * th + dy * th), za + kz * rw * th - 0.003 * th) for kx, kz in THUMB_K]
         c.tube(prev, r)
         prev = r
-    c.cap(prev, c.add(hx + 0.024 * sa, -(HW * th + 0.061 * th), za - 0.003 * th))
+    c.cap(prev, c.add(hx + 0.024 * sh, -(HW * th + 0.061 * th), za - 0.003 * th))
 
     # Bein + Fuß (Schritt etwas tiefer: Beine minimal kürzer)
     t0 = rings[0]

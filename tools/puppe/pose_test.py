@@ -255,7 +255,8 @@ def pose_stehen(rig, reach=False):
     return s
 
 
-SIT_ARM = dict(upper=(0.06, -0.06, -1.0), fore=(-0.22, -0.50, -0.84), hand=(-0.02, -0.90, -0.44))
+# Oberarm leicht nach außen und hinten, Unterarm nach vorn zur Mitte: die Hände liegen auf den Oberschenkeln (wie RED-EYE P1 110 s)
+SIT_ARM = dict(upper=(0.30, 0.12, -0.95), fore=(-0.50, -0.62, -0.60), hand=(-0.12, -0.95, -0.25))
 
 
 def pose_sitzen(rig):
@@ -302,17 +303,19 @@ def box(name, x0, x1, y0, y1, z0, z1, mat):
     return ob
 
 
-def seat_for(ob, rig):
-    """Sitz exakt unter Hintern/Oberschenkel, Lehne direkt am Rücken (Kontakt, nichts schwebt, nichts steckt drin)."""
+def seat_for(ob, rig, pad=0.0):
+    """Sitz exakt unter Hintern/Oberschenkel, Lehne direkt am Rücken (Kontakt, nichts schwebt, nichts steckt drin).
+    pad: zusätzlicher Abstand zur Lehne, z. B. für Kleidung."""
     co = world_coords(ob)
     x, y, z = co[:, 0], co[:, 1], co[:, 2]
     lap = (np.abs(x) < 0.25) & (y > -0.24) & (y < 0.14) & (z > 0.2) & (z < 0.8)
     top = float(z[lap].min())
     torso = (np.abs(x) < 0.12) & (z > top + 0.12) & (z < top + 0.6)
-    back = float(y[torso].max())
+    back = float(y[torso].max()) + pad
     m = flat_mat("Set_Sitz_M", "#5B5F66", 0.8)
     parts = [box("Sitz_Flaeche", -0.27, 0.27, -0.30, back + 0.02, top - 0.14, top, m),
-             box("Sitz_Lehne", -0.27, 0.27, back, back + 0.13, top - 0.14, top + 0.72, m)]
+             box("Sitz_Lehne", -0.27, 0.27, back, back + 0.13, top - 0.14, top + 0.72, m),
+             box("Sitz_Fuss", -0.20, 0.20, -0.14, back + 0.06, 0.0, top - 0.12, m)]
     inv = rig.matrix_world.inverted()
     for o in parts:
         o.parent = rig

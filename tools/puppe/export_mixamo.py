@@ -2,11 +2,15 @@
 + Marker-Hilfe für Mixamo -> reference/abnahme/mixamo_marker.jpg.
 Die Grund-Puppe in characters.blend bleibt unverändert; die Kopie existiert nur während des Exports.
 Läuft nach build_puppe.py + abnahme.py im selben Namensraum."""
+import json
+
 import bmesh
 import numpy as np
 
 FBX_PATH = "C:/ProjectTikTok/studio/assets/characters/puppe_tpose.fbx"
 GUIDE_RENDER = "C:/ProjectTikTok/studio/renders/_puppe/mixamo_vorn.png"
+GUIDE_JSON = "C:/ProjectTikTok/studio/renders/_puppe/mixamo_marker.json"
+GUIDE_WIDTH = 2.0  # Bildbreite der Ortho-Kamera in Metern
 
 
 def _islands(me):
@@ -38,8 +42,10 @@ def _islands(me):
     return out
 
 
-def _core(k=1.0, zb=1.46):
+def _core():
     """Unsichtbarer Kern im Hals: verbindet Körper, Ring und Kugel zu einer Hülle (steckt komplett im Ring)."""
+    p = VARIANTS["Erwachsen"]
+    k, zb = p["D"] / 0.29, p["H"] - p["D"]
     seg, r, z0, z1 = 24, 0.045 * k, zb - 0.06 * k, zb - 0.02 * k
     v = [(r * math.cos(2 * math.pi * s / seg), r * math.sin(2 * math.pi * s / seg), z) for z in (z0, z1) for s in range(seg)]
     v += [(0.0, 0.0, z0), (0.0, 0.0, z1)]
@@ -135,14 +141,26 @@ def render_guide(ob):
         o.hide_render = True
     set_look("warm")
     bpy.data.objects["Set_Leiste"].hide_render = True
-    cam = camera((0, -6.0, 0.9), (0, 0, 0.9), 50)
+    p = VARIANTS["Erwachsen"]
+    zc = p["H"] / 2
+    cam = camera((0, -6.0, zc), (0, 0, zc), 50)
     cam.data.dof.use_dof = False
     cam.data.type = "ORTHO"
-    cam.data.ortho_scale = 2.2
+    cam.data.ortho_scale = GUIDE_WIDTH
     render(GUIDE_RENDER, 1400, 1400, 32)
     cam.data.type = "PERSP"
     for o, h in hidden:
         o.hide_render = h
+    # Marker-Positionen für make_boards.marker(): gemessen an der echten Kopie (Schritt) + Gelenke aus rig_joints()
+    co = np.zeros(len(ob.data.vertices) * 3, np.float32)
+    ob.data.vertices.foreach_get("co", co)
+    co = co.reshape(-1, 3)
+    j = rig_joints(p)
+    mid = (np.abs(co[:, 0]) < 0.006) & (co[:, 2] < p["H"] * 0.6)
+    crotch = float(co[mid, 2].min())  # tiefster Punkt der Mittellinie unterhalb 60 % = Schritt
+    with open(GUIDE_JSON, "w", encoding="utf-8") as f:
+        json.dump(dict(width=GUIDE_WIDTH, zc=zc, H=p["H"], za=j["za"], wrist=j["wrist"], elbow=j["elbow"], knee_x=j["xl"], knee_z=j["knee"],
+                       groin=crotch + 0.025, chin=p["H"] - p["D"] + 0.015), f)
 
 
 def run():

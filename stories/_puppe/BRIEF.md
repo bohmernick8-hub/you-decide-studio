@@ -11,9 +11,9 @@ Aus 4–6 Vorbild-Bildern messen und in `bible/FIGUREN.md` → „Maße Grund-Pu
 Die 4 Merkmale aus `bible/FIGUREN.md` → „UNSERE Signatur“: senkrechte Kapsel-Augen, feine Guss-Naht über den Kopf, Kugelgelenk am Hals, leicht gebogener Mund. Proportionen wie RED-EYE, Gesicht + Details eigen. Im Vergleichsbild (Schritt 4) muss man den Unterschied sofort sehen, aber die Stil-Familie muss gleich wirken.
 
 ## 2. Modell (Blender, über MCP)
-- **Ein** sauberes Mesh in **T-Pose**, Quads, ≈ 10–30k Dreiecke, Maßstab echt (1,75 m), Füße auf Z = 0, Blick nach −Y (Blender-Front).
+- **Ein** sauberes Mesh in **T-Pose**, Quads, ≈ 10–30k Dreiecke, Maßstab echt (1,62 m – Nick 05.11., vorher 1,75 m), Füße auf Z = 0, Blick nach −Y (Blender-Front).
 - Kopf: glatte Kugel (Subdivision, keine Kanten), Größe laut Maßen; Körper weich-klobig, Gelenke (Schulter, Ellbogen, Knie, Hüfte) mit genug Kanten zum Biegen; Fäustlings-Hände laut Vorbild.
-- Drei Varianten aus demselben Modell (Shape Keys oder Kopien): **Erwachsen 1,75 m**, **Erwachsen schmal 1,65 m**, **Kind 1,20 m** (Kopf relativ größer).
+- Drei Varianten aus demselben Modell (Shape Keys oder Kopien): **Erwachsen 1,62 m**, **Erwachsen schmal 1,55 m**, **Kind 1,15 m** (Kopf relativ größer; Nick 05.11., vorher 1,75 / 1,65 / 1,20 m).
 
 ## 3. Material + Gesicht
 - Material: Off-White ≈ #E8E6E1, Roughness 0,5–0,6, ganz leichter Sheen + minimal Subsurface (wirkt wie mattes Vinyl). Im Look-Licht testen, nicht im Standard-Licht.

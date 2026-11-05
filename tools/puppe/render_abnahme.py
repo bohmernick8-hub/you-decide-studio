@@ -64,6 +64,18 @@ def do_hero():
     render(f"{R}/koerper_warm.png", 1000, 1000, 48)
 
 
+def head_center(ob):
+    rank, roots = island_ids(ob.data)
+    isl = np.array([rank[int(r)] for r in roots])
+    return world_coords(ob)[isl == 1].mean(axis=0)
+
+
+def sit_cam(hc, dof=False):
+    """Kamera wie RED-EYE P1 110 s (Kopf ≈ 30 % der Bildbreite, leicht von unten), relativ zum sitzenden Kopf."""
+    z = float(hc[2])
+    return camera((0.54, -1.50, z - 0.331), (0.15, -0.10, z - 0.10), 34, 2.8 if dof else None, (0, -0.1, z - 0.02) if dof else None)
+
+
 def do_posen():
     """Körper sitzend + stehend für den Vergleich (Hilfs-Skelett aus pose_test.py, nicht das Mixamo-Rig)."""
     cleanup()
@@ -75,7 +87,8 @@ def do_posen():
     apply_pose(rig, pose_stehen(rig, reach=True))
     ground(ob, rig)
     rig.rotation_euler.z = math.pi
-    camera((-0.24, -0.90, 1.30), (0.05, 0, 1.24), 26, 2.8, (0, 0.05, 1.45))
+    dz = VARIANTS["Erwachsen"]["H"] - 1.75
+    camera((-0.24, -0.90, 1.30 + dz), (0.05, 0, 1.24 + dz), 26, 2.8, (0, 0.05, 1.45 + dz))
     render(f"{R}/pose_steh_p2.png", 1080, 1920, 64)
     rig.rotation_euler.z = 0
     # stehend, Arme hängen: vorn / Seite / Rücken
@@ -85,7 +98,7 @@ def do_posen():
     w = world_coords(ob)
     band = (w[:, 2] > za - 0.06) & (w[:, 2] < za + 0.07)
     print("Schulterbreite stehend /D:", round(float(w[band, 0].max() - w[band, 0].min()) / 0.29, 3))
-    camera((0, -4.2, 0.95), (0, 0, 0.88), 50).data.dof.use_dof = False
+    camera((0, -3.9, 0.88), (0, 0, 0.81), 50).data.dof.use_dof = False
     for nm, rz in (("vorn", 0), ("seite", 90), ("ruecken", 180)):
         rig.rotation_euler.z = math.radians(rz)
         render(f"{R}/pose_steh_{nm}.png", 900, 900, 48)
@@ -95,19 +108,48 @@ def do_posen():
     ground(ob, rig)
     print("Sitz:", seat_for(ob, rig))
     ob["ausdruck"] = 1
-    camera((0.54, -1.50, 0.96), (0.15, -0.10, 1.17), 34, 2.8, (0, -0.1, 1.27))
+    sit_cam(head_center(ob), dof=True)
     render(f"{R}/pose_sitz_p1.png", 1080, 1920, 64)
-    camera((0, -4.2, 0.85), (0, -0.05, 0.72), 50).data.dof.use_dof = False
+    camera((0, -3.8, 0.76), (0, -0.05, 0.64), 50).data.dof.use_dof = False
     for nm, rz in (("dreiviertel", 35), ("seite", 90)):
         rig.rotation_euler.z = math.radians(rz)
         render(f"{R}/pose_sitz_{nm}.png", 900, 900, 48)
     cleanup()
 
 
+def do_hoodie():
+    """Hoodie-Proxy sitzend im Nachtlicht, gleiche Kamera wie der Körper-Vergleich zu RED-EYE P1 110 s."""
+    cleanup()
+    scn, P = base()
+    only()
+    set_look("nacht")
+    p = VARIANTS["Erwachsen"]
+    ob, rig = make_posed("Erwachsen")
+    make_hoodie(ob, rig, rig_joints(p))
+    apply_pose(rig, pose_sitzen(rig))
+    ground(ob, rig)
+    print("Sitz:", seat_for(ob, rig, pad=0.03))
+    ob["ausdruck"] = 1
+    hc = head_center(ob)
+    # Nacht-Licht wandert mit dem Kopf nach unten; Kabinen-Leiste aus dem Bild, Wand als ruhiger Hintergrund nah heran
+    dz = float(hc[2]) - HEAD_Z
+    for nm in ("Licht_Key", "Licht_Fill", "Licht_Rim"):
+        bpy.data.objects[nm].location.z += dz
+    bpy.data.objects["Licht_Fill"].data.energy = 24.0
+    for nm in ("Set_Decke", "Set_Lichtband"):
+        bpy.data.objects[nm].hide_render = True
+    bpy.data.objects["Set_Wand"].location.y = 2.4
+    sit_cam(hc, dof=True)
+    render(f"{R}/hoodie_nacht_p1.png", 1080, 1920, 64)
+    camera((1.15, -2.75, 0.82), (0.0, -0.04, 0.70), 50).data.dof.use_dof = False
+    render(f"{R}/hoodie_nacht_ganz.png", 1080, 1920, 64)
+    cleanup()
+
+
 def do_details():
     scn, P = base()
     set_look("warm")
-    camera((0, -4.2, 1.0), (0, 0, 0.9), 50).data.dof.use_dof = False
+    camera((0, -3.9, 0.92), (0, 0, 0.82), 50).data.dof.use_dof = False
     render(f"{R}/t_vorn.png", 900, 900, 48)
     # Fäustling von oben (Daumen zeigt zur Bildunterkante)
     j = rig_joints(VARIANTS["Erwachsen"])
@@ -133,7 +175,7 @@ def do_lineup():
         band = (w[:, 2] > j["za"] - 0.06) & (w[:, 2] < j["za"] + 0.07)
         D = VARIANTS[nm]["D"]
         print(nm, "Hoehe", round(float(w[:, 2].max()), 3), "Schultern/D", round(float(w[band, 0].max() - w[band, 0].min()) / D, 2))
-    camera((0, -5.6, 0.95), (0, 0, 0.88), 50).data.dof.use_dof = False
+    camera((0, -5.2, 0.88), (0, 0, 0.81), 50).data.dof.use_dof = False
     render(f"{R}/varianten.png", 1800, 900, 48)
     cleanup()
     only("Puppe_Erwachsen", "Puppe_Schmal", "Puppe_Kind")
