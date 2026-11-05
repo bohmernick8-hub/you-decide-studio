@@ -1,0 +1,6 @@
+*.blend1
+out/
+renders/
+*.png.tmp
+node_modules/
+.env
