@@ -93,9 +93,17 @@ Grundlage ist immer das **Main-Gesicht** (`neutral`): senkrechte Kapsel-Augen + 
 - **Skelett = Mixamo-Auto-Rigger** (Nicks Upload, `C:\ProjectTikTok\assets\mixamo\puppe_rigged.fbx`, 25 Knochen `mixamorig:*`, ohne Finger). In `characters.blend`: `Rig_Erwachsen`, `Rig_Schmal`, `Rig_Kind` (Collection „Puppe“), jede Puppe hängt mit Modifier „Skelett“ dran. Ruhe-Haltung = T-Pose.
 - **Gewichte**: vom Mixamo-Mesh aufs Original übertragen (nächste Fläche) → FaceUV, Material und die Schalter `ausdruck/mund/brauen/glanz` bleiben. **Kopf + Halskugel starr am Kopf-Knochen** (Kopf bleibt rund), Ring folgt dem Hals.
 - **Schmal + Kind**: kein eigener Mixamo-Upload – gleiche Topologie, Gewichte 1:1, Knochen an den Varianten-Körper angepasst (`tools/puppe/rig_puppe.py`).
-- **Animationen**: Mixamo-Dateien (Y Bot, „Without Skin“, 30 fps) passen direkt. Immer über `apply_action(rig, name)` anhängen: skaliert den Hüft-Weg auf unsere Beinlänge (sonst schwebt/versinkt die Puppe) und spreizt die Oberarme 5° (unsere Puppe ist klobiger als der Y Bot). Basis-Aktionen liegen als `Mixamo_*` in der Bibliothek.
-- **Geprüft** (jedes 2. Bild, alle 3 Puppen): Sitting Idle, Sleeping Idle (= „Laying Sleeping.fbx“), Walking ohne Hand-im-Körper. **Look Over Shoulder**: in Bild 5–10 streift eine Hand die Hüfte (bis 3 cm) → in Szenen, wo das im Bild ist, Arm pro Szene korrigieren.
-- Sitzen: Sitz unter dem Becken bauen (`seat_for`), vordere Kante kurz vor den Knien. Kind sitzt mit Y-Bot-Sitzen tief mit nach vorn gestreckten Beinen.
+- **Animationen liegen in `assets/characters/animations.blend`** (nicht in der Figuren-Bibliothek, die bleibt klein). Immer über `apply_action(rig, name)` anhängen – holt die Aktion selbst aus der Datei und:
+  1. rechnet die Y-Bot-Bewegung auf unsere Knochen um (Schlüsselbeine und Füße stehen beim Y Bot ≈ 20° anders),
+  2. skaliert den Hüft-Weg auf unsere Beinlänge (sonst schwebt/versinkt die Puppe),
+  3. spreizt die Oberarme 5° (unsere Puppe ist klobiger als der Y Bot),
+  4. legt, wo vorhanden, die **Hand-Korrektur** `Fix_…__Rig_<Puppe>` darüber (nur Arm-Drehungen; Hände per IK aus Kopf/Körper geschoben, weich ein- und ausgeblendet).
+- **Namen = Dateinamen**: Aktion `Mixamo_<Dateiname>`, z. B. `Mixamo_Laying_Sleeping`, `Mixamo_Standing_W_Briefcase_Idle` (im Ordner liegt die Aktentaschen-Variante, kein reines „Standing Idle“).
+- **Alle 9 Animationen geprüft** (jedes 2. Bild, alle 3 Puppen, Hand in Rumpf/Beinen/Kopf; Board `reference/abnahme/puppe_rig_test2.jpg`): Sitting Idle, Laying Sleeping, Walking, Standing W_Briefcase Idle, Crouched Walking, Crawling = sauber. Korrigiert und danach sauber: **Terrified** (Hände bis 15 cm im Kopf – unser Kopf ist viel größer als beim Y Bot), **Sitting Talking** (Kind bis 2,4 cm, Erwachsen 3 mm), **Look Over Shoulder** (bis 2,2 cm).
+- **Eigene Posen** (ebenfalls in `animations.blend`):
+  - `Pose_Sitzen_Schlafen_<Puppe>`: aus Sitting Idle, Kopf nach vorn + zur Seite gesackt, Rücken leicht rund, Hände im Schoß, ruhiges Atmen als 4-s-Schleife. Anhängen mit `apply_sitzen_schlafen(variante)` → setzt auch `ausdruck = 1` (augen-zu). Kind sitzt dabei mit hängenden Beinen.
+  - `Pose_Kind_Sitzen_Haengend`: Kind auf 0,40 m Sitzhöhe, Oberkörper wie Sitting Idle, Beine hängen, Füße 16 cm über dem Boden.
+- Sitzen: Sitz unter dem Becken bauen (`seat_for`), vordere Kante kurz vor den Knien. Erwachsen/Schmal: Füße auf dem Boden.
 
 ## Ablauf
 1. Grund-Puppe modellieren → Standbild neben RED-EYE-Figur (`reference/redeye/frames/p1_1.2.jpg`) → Nick-OK.

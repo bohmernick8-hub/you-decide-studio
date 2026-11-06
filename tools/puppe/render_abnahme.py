@@ -146,7 +146,7 @@ def do_hoodie():
     cleanup()
 
 
-RIG_ANIMS = [("Sitting Idle", 44), ("Sleeping Idle", 1), ("Walking", 11), ("Look Over Shoulder", 76)]
+RIG_ANIMS = [("Sitting Idle", 44), ("Laying Sleeping", 1), ("Walking", 11), ("Look Over Shoulder", 76)]
 
 
 def _rig_setup():
@@ -199,7 +199,7 @@ def do_rig_test():
         rig, mesh, lo, hi = _anim_on("Erwachsen", name)
         scn.frame_set(f)
         c = _bone_w(rig, "Spine")
-        off = {"Sleeping Idle": (1.1, -2.0, 1.3)}.get(name, (1.2, -2.6, 0.15))
+        off = {"Laying Sleeping": (1.1, -2.0, 1.3)}.get(name, (1.2, -2.6, 0.15))
         camera((c.x + off[0], c.y + off[1], c.z + off[2]), tuple(c), 50).data.dof.use_dof = False
         render(f"{out}/a_{name.replace(' ', '_')}.png", 900, 900, 48)
         if name == "Sitting Idle":
@@ -230,12 +230,73 @@ def do_rig_test():
     scn.frame_set(1)
 
 
+SEATED = ("Sitting Idle", "Sitting Talking")
+
+
+def _pose_on(variant, action_name, seat=True):
+    """Eigene Pose (Aktion aus der Bibliothek) anhängen; Sitz unter das Becken."""
+    rig, mesh = bpy.data.objects["Rig_" + variant], bpy.data.objects["Puppe_" + variant]
+    only("Puppe_" + variant)
+    clear_action(rig)
+    ensure_actions([action_name])
+    ad = rig.animation_data_create()
+    ad.action = bpy.data.actions[action_name]
+    if ad.action_slot is None:
+        ad.action_slot = ad.action.slots[0]
+    bpy.context.scene.frame_set(1)
+    if seat:
+        seat_for(mesh, rig, pad=0.0)
+    return rig, mesh
+
+
+def _shot(rig, path, target_bone, off, lens=50, res=900):
+    c = _bone_w(rig, target_bone)
+    camera((c.x + off[0], c.y + off[1], c.z + off[2]), tuple(c), lens).data.dof.use_dof = False
+    render(path, res, res, 48)
+
+
+def do_rig_test2():
+    """Standbilder für puppe_rig_test2.jpg: neue Posen, die 5 weiteren Animationen, Varianten."""
+    scn = _rig_setup()
+    out = f"{R}/rig2"
+    front = (1.2, -2.6, 0.15)
+    # Reihe 1: Sitzen_Schlafen (3 Puppen), Kind mit hängenden Beinen, Nah-Bild
+    for variant in ("Erwachsen", "Schmal", "Kind"):
+        rig, mesh = _pose_on(variant, "Pose_Sitzen_Schlafen_" + variant)
+        face(mesh, ausdruck=1)
+        _shot(rig, f"{out}/p_schlafen_{variant}.png", "Spine", front)
+        if variant == "Erwachsen":
+            _shot(rig, f"{out}/p_schlafen_nah.png", "Spine2", (0.55, -1.25, 0.05))
+        face(mesh)
+        _anim_off(rig, variant)
+    rig, mesh = _pose_on("Kind", "Pose_Kind_Sitzen_Haengend")
+    scn.frame_set(44)
+    _shot(rig, f"{out}/p_kind_haengend.png", "Spine", (1.9, -1.4, -0.05))
+    _anim_off(rig, "Kind")
+    # Reihe 2 + 3: die 5 weiteren Animationen
+    shots = [("Erwachsen", "Sitting Talking", 263), ("Erwachsen", "Standing W_Briefcase Idle", 100), ("Erwachsen", "Crouched Walking", 11),
+             ("Erwachsen", "Terrified", 400), ("Erwachsen", "Crawling", 14),
+             ("Kind", "Terrified", 400), ("Schmal", "Sitting Talking", 600), ("Kind", "Sitting Talking", 263), ("Schmal", "Crouched Walking", 21),
+             ("Kind", "Crawling", 40)]
+    for variant, name, f in shots:
+        rig, mesh, lo, hi = _anim_on(variant, name, seat_frame=f)
+        if name in SEATED and name != "Sitting Idle":
+            scn.frame_set(f)
+            seat_for(mesh, rig, pad=0.0)
+        scn.frame_set(f)
+        off = {"Crawling": (1.5, -2.2, 0.6)}.get(name, front)
+        _shot(rig, f"{out}/a_{variant}_{name.replace(' ', '_')}.png", "Spine", off)
+        _anim_off(rig, variant)
+    only("Puppe_Erwachsen", "Puppe_Schmal", "Puppe_Kind")
+    scn.frame_set(1)
+
+
 def do_rig_video(name, a, b, frames=114):
     """Bilder für das 2×2-Bewegungsvideo (Kamera folgt der Hüfte). a..b = Teilstück, damit ein Aufruf kurz bleibt."""
     scn = _rig_setup()
     rig, mesh, lo, hi = _anim_on("Erwachsen", name)
     span = hi - lo + 1
-    off = {"Sleeping Idle": (1.0, -1.9, 1.2)}.get(name, (1.1, -2.5, 0.15))
+    off = {"Laying Sleeping": (1.0, -1.9, 1.2)}.get(name, (1.1, -2.5, 0.15))
     for k in range(a, min(b, frames) + 1):
         scn.frame_set(lo + (k - 1) % span)
         c = _bone_w(rig, "Spine")

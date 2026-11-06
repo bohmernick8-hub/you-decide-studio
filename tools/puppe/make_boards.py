@@ -168,7 +168,7 @@ def rig_sheet(note):
     """Rig-Test-Blatt: 4 Animationen, Gelenke nah, Varianten."""
     T, LBL = 540, 76
     G = (120, 230, 140)
-    rows = [[("a_Sitting_Idle", "Sitting Idle"), ("a_Sleeping_Idle", "Sleeping Idle (Laying Sleeping)"), ("a_Walking", "Walking"),
+    rows = [[("a_Sitting_Idle", "Sitting Idle"), ("a_Laying_Sleeping", "Laying Sleeping"), ("a_Walking", "Walking"),
              ("a_Look_Over_Shoulder", "Look Over Shoulder")],
             [("j_1_ellbogen", "Ellbogen (sitzend)"), ("j_2_knie", "Knie + Hüfte (sitzend)"), ("j_3_schultern", "Schultern (gehend)"),
              ("j_4_hals", "Hals: Kugel + Ring (Kopf gedreht)")],
@@ -186,12 +186,61 @@ def rig_sheet(note):
     print("rig_sheet", S.size)
 
 
+def rig_sheet2():
+    """puppe_rig_test2.jpg: neue Posen, die 5 weiteren Animationen, Prüf-Tabelle Hand im Körper (vorher -> nach Korrektur)."""
+    T, LBL = 540, 70
+    G = (120, 230, 140)
+    pr = json.load(open(RN + "rig_pruefung.json", encoding="utf-8"))
+    fx = json.load(open(RN + "rig_fix.json", encoding="utf-8"))
+    po = json.load(open(RN + "rig_posen.json", encoding="utf-8"))
+    sections = [
+        ("NEUE POSEN  (Sitzen_Schlafen: Kopf gesackt, Hände im Schoß, augen-zu, Atem-Schleife 4 s · Kind sitzt auf 0,40 m)",
+         [("p_schlafen_Erwachsen", "Sitzen_Schlafen  Erwachsen"), ("p_schlafen_Schmal", "Sitzen_Schlafen  Schmal"),
+          ("p_schlafen_Kind", "Sitzen_Schlafen  Kind"), ("p_kind_haengend", "Kind sitzend, Beine hängen"), ("p_schlafen_nah", "Sitzen_Schlafen nah")]),
+        ("DIE 5 WEITEREN ANIMATIONEN  (Erwachsen; Hände nach Korrektur aus Kopf/Körper)",
+         [("a_Erwachsen_Sitting_Talking", "Sitting Talking"), ("a_Erwachsen_Standing_W_Briefcase_Idle", "Standing W_Briefcase Idle"),
+          ("a_Erwachsen_Crouched_Walking", "Crouched Walking"), ("a_Erwachsen_Terrified", "Terrified"), ("a_Erwachsen_Crawling", "Crawling")]),
+        ("VARIANTEN",
+         [("a_Kind_Terrified", "Kind  Terrified"), ("a_Schmal_Sitting_Talking", "Schmal  Sitting Talking"), ("a_Kind_Sitting_Talking", "Kind  Sitting Talking"),
+          ("a_Schmal_Crouched_Walking", "Schmal  Crouched Walking"), ("a_Kind_Crawling", "Kind  Crawling")]),
+    ]
+    anims = list(dict.fromkeys(k.split("|")[0] for k in pr))
+    lines = []
+    for an in anims:
+        parts = []
+        for nm, short in (("Erwachsen", "E"), ("Schmal", "S"), ("Kind", "K")):
+            v = pr[f"{an}|{nm}"]
+            k = f"{an}|{nm}"
+            if v["treffer"] == 0:
+                parts.append(f"{short} 0")
+            else:
+                parts.append(f"{short} {v['treffer']}→{fx.get(k, '?')} (vorher bis {v['tiefe_mm'] / 10:.1f} cm)".replace(".", ","))
+        lines.append(f"{an}:  " + " · ".join(parts))
+    lines.append("Eigene Posen:  " + " · ".join(f"{k} {v}".replace(".", ",") for k, v in po.items()))
+    TAB = 40 + 34 * len(lines)
+    S = Image.new("RGB", (5 * T, 3 * (LBL + T) + TAB + 60), BG)
+    d = ImageDraw.Draw(S)
+    y = 0
+    for title, items in sections:
+        d.text((16, y + 20), title, font=F(28), fill=YEL)
+        y += LBL
+        for c, (fn, lab) in enumerate(items):
+            im = Image.open(f"{RN}rig2/{fn}.png").convert("RGB").resize((T, T), Image.LANCZOS)
+            S.paste(tag(im, lab, G), (c * T, y))
+        y += T
+    d.text((16, y + 16), "HAND IM KÖRPER/KOPF – Bilder mit Treffer (jedes 2. Bild geprüft), vorher → nach Korrektur:", font=F(28), fill=YEL)
+    for i, ln in enumerate(lines):
+        d.text((16, y + 60 + 34 * i), ln, font=F(24), fill=FG)
+    S.save(AB + "puppe_rig_test2.jpg", quality=90)
+    print("rig_sheet2", S.size)
+
+
 def rig_video():
     """2×2-Video (je 540×540, 114 Bilder = 3,8 s, kürzere Animationen laufen in Schleife) -> puppe_rig_test.mp4."""
     import os
     import subprocess
     import tempfile
-    names = [("Sitting_Idle", "Sitting Idle"), ("Sleeping_Idle", "Sleeping Idle"), ("Walking", "Walking"), ("Look_Over_Shoulder", "Look Over Shoulder")]
+    names = [("Sitting_Idle", "Sitting Idle"), ("Laying_Sleeping", "Laying Sleeping"), ("Walking", "Walking"), ("Look_Over_Shoulder", "Look Over Shoulder")]
     tmp = tempfile.mkdtemp()
     for k in range(1, 115):
         S = Image.new("RGB", (1080, 1080), BG)
